@@ -18,7 +18,12 @@
 function toggleProvidingOrgFields() {
   // Detect which budget type is currently selected
   var budgetTypeRadios = document.querySelectorAll('input[name="budget[budget_type]"].govuk-radios__input');
-  var selectedBudgetType = Array.from(budgetTypeRadios).find((node) => node.checked)?.value;
+  var selectedBudgetType
+  for (let i = 0; i < budgetTypeRadios.length; i++) {
+    if (budgetTypeRadios[i].checked) {
+      selectedBudgetType = budgetTypeRadios[i].value
+    }
+  }
 
   if (selectedBudgetType === undefined)
     return;
