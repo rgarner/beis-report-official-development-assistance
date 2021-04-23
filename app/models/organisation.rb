@@ -36,4 +36,8 @@ class Organisation < ApplicationRecord
   def self.service_owner
     Organisation.find_by(service_owner: true)
   end
+
+  def delivery_partner?
+    !service_owner?
+  end
 end

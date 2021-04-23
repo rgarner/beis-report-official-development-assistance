@@ -80,6 +80,8 @@ class Activity < ApplicationRecord
 
   strip_attributes only: [:delivery_partner_identifier, :roda_identifier_fragment]
 
+  validate :organisation_and_extending_organisation_valid_for_level
+
   validates :level, presence: true
   validates :parent, absence: true, if: proc { |activity| activity.fund? }
   validates :parent, presence: true, unless: proc { |activity| activity.fund? }
@@ -138,7 +140,7 @@ class Activity < ApplicationRecord
 
   has_many :child_activities, foreign_key: "parent_id", class_name: "Activity"
   belongs_to :organisation
-  belongs_to :extending_organisation, foreign_key: "extending_organisation_id", class_name: "Organisation"
+  belongs_to :extending_organisation, foreign_key: "extending_organisation_id", class_name: "Organisation", optional: true
 
   has_many :implementing_organisations, dependent: :destroy
   validates_associated :implementing_organisations
@@ -512,5 +514,26 @@ class Activity < ApplicationRecord
       grouped_projects += third_party_projects.fetch(project.id, []).sort_by { |a| a.roda_identifier_fragment.to_s }
     end
     grouped_projects
+  end
+
+  private
+
+  def organisation_and_extending_organisation_valid_for_level
+    case level
+    when "fund"
+      errors.add(:organisation_id, "should be BEIS for a fund") unless organisation.service_owner?
+      errors.add(:extending_organisation_id, "should be BEIS for a fund") unless extending_organisation.service_owner?
+    when "programme"
+      errors.add(:organisation_id, "should be BEIS for a programme") unless organisation.service_owner?
+      errors.add(:extending_organisation_id, "should NOT be BEIS for a programme") unless organisation.delivery_partner?
+    when "project"
+      errors.add(:organisation_id, "should NOT be BEIS for a project") unless organisation.delivery_partner?
+      errors.add(:extending_organisation_id, "should NOT be BEIS for a project") unless extending_organisation.delivery_partner?
+      errors.add(:base, "'organisation' and 'extending_organisation' should be the same for a project") unless organisation_id == extending_organisation_id
+    when "third_party_project"
+      errors.add(:organisation_id, "should NOT be BEIS for a third-party project") unless organisation.delivery_partner?
+      errors.add(:extending_organisation_id, "should NOT be BEIS for a third-party project") unless extending_organisation.delivery_partner?
+      errors.add(:base, "'organisation' and 'extending_organisation' should be the same for a third-party project") unless organisation_id == extending_organisation_id
+    end
   end
 end
