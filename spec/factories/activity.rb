@@ -1,5 +1,10 @@
 FactoryBot.define do
   factory :activity do
+    transient do
+      _beis { create(:beis_organisation) }
+      _dp { organisation || create(:delivery_partner_organisation) }
+    end
+
     title { Faker::Lorem.sentence }
     delivery_partner_identifier { "GCRF-#{Faker::Alphanumeric.alpha(number: 5).upcase!}" }
     roda_identifier_fragment { Faker::Alphanumeric.alpha(number: 5) }
@@ -33,8 +38,11 @@ FactoryBot.define do
 
     form_state { "complete" }
 
-    association :organisation, factory: :organisation
-    association :reporting_organisation, factory: :beis_organisation
+    before(:create) do |activity, evaluator|
+      activity.organisation = evaluator._dp
+      activity.extending_organisation = evaluator._dp
+      activity.reporting_organisation = evaluator._beis
+    end
 
     before(:create) do |activity|
       activity.cache_roda_identifier
@@ -50,9 +58,10 @@ FactoryBot.define do
     factory :fund_activity do
       level { :fund }
 
-      association :organisation, factory: :beis_organisation
-      association :extending_organisation, factory: :beis_organisation
-      association :reporting_organisation, factory: :beis_organisation
+      before(:create) do |fund, evaluator|
+        fund.organisation = evaluator._beis
+        fund.extending_organisation = evaluator._beis
+      end
 
       trait :gcrf do
         roda_identifier_fragment { "GCRF" }
@@ -82,9 +91,10 @@ FactoryBot.define do
       country_delivery_partners { ["National Council for the State Funding Agencies (CONFAP)"] }
       collaboration_type { "1" }
 
-      association :organisation, factory: :beis_organisation
-      association :extending_organisation, factory: :delivery_partner_organisation
-      association :reporting_organisation, factory: :beis_organisation
+      before(:create) do |programme, evaluator|
+        programme.organisation = evaluator._beis
+        programme.extending_organisation = evaluator._dp
+      end
 
       trait :newton_funded do
         source_fund_code { Fund::MAPPINGS["NF"] }
@@ -116,8 +126,10 @@ FactoryBot.define do
       policy_marker_disaster_risk_reduction { "not_assessed" }
       policy_marker_nutrition { "not_assessed" }
 
-      association :extending_organisation, factory: :delivery_partner_organisation
-      association :reporting_organisation, factory: :beis_organisation
+      before(:create) do |project, evaluator|
+        project.organisation = evaluator._dp
+        project.extending_organisation = evaluator._dp
+      end
 
       factory :project_activity_with_implementing_organisations do
         transient do
@@ -160,8 +172,10 @@ FactoryBot.define do
       policy_marker_disaster_risk_reduction { "not_assessed" }
       policy_marker_nutrition { "not_assessed" }
 
-      association :extending_organisation, factory: :delivery_partner_organisation
-      association :reporting_organisation, factory: :beis_organisation
+      before(:create) do |third_party_project, evaluator|
+        third_party_project.organisation = evaluator._dp
+        third_party_project.extending_organisation = evaluator._dp
+      end
 
       trait :newton_funded do
         source_fund_code { Fund::MAPPINGS["NF"] }
