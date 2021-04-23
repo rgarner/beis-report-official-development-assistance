@@ -34,6 +34,7 @@ FactoryBot.define do
     form_state { "complete" }
 
     association :organisation, factory: :organisation
+    association :extending_organisation, factory: :organisation
     association :reporting_organisation, factory: :beis_organisation
 
     before(:create) do |activity|

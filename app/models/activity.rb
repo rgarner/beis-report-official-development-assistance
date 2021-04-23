@@ -140,7 +140,7 @@ class Activity < ApplicationRecord
 
   has_many :child_activities, foreign_key: "parent_id", class_name: "Activity"
   belongs_to :organisation
-  belongs_to :extending_organisation, foreign_key: "extending_organisation_id", class_name: "Organisation", optional: true
+  belongs_to :extending_organisation, foreign_key: "extending_organisation_id", class_name: "Organisation"
 
   has_many :implementing_organisations, dependent: :destroy
   validates_associated :implementing_organisations
