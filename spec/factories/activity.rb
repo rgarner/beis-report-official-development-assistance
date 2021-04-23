@@ -1,5 +1,9 @@
 FactoryBot.define do
   factory :activity do
+    transient do
+      __beis { create(:beis_organisation) }
+    end
+
     title { Faker::Lorem.sentence }
     delivery_partner_identifier { "GCRF-#{Faker::Alphanumeric.alpha(number: 5).upcase!}" }
     roda_identifier_fragment { Faker::Alphanumeric.alpha(number: 5) }
@@ -77,7 +81,8 @@ FactoryBot.define do
     end
 
     factory :programme_activity do
-      parent factory: :fund_activity
+      parent { association :fund_activity, organisation: __beis, extending_organisation: __beis }
+
       level { :programme }
       objectives { Faker::Lorem.paragraph }
       country_delivery_partners { ["National Council for the State Funding Agencies (CONFAP)"] }
@@ -99,7 +104,8 @@ FactoryBot.define do
     end
 
     factory :project_activity do
-      parent factory: :programme_activity
+      parent { association :programme_activity, organisation: __beis, extending_organisation: extending_organisation }
+
       level { :project }
       objectives { Faker::Lorem.paragraph }
       call_present { "true" }
@@ -143,7 +149,8 @@ FactoryBot.define do
     end
 
     factory :third_party_project_activity do
-      parent factory: :project_activity
+      parent { association :project_activity, organisation: organisation, extending_organisation: extending_organisation }
+
       level { :third_party_project }
       objectives { Faker::Lorem.paragraph }
       call_present { "true" }
