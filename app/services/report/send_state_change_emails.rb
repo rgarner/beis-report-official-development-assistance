@@ -48,7 +48,7 @@ class Report
     end
 
     def service_owners
-      Organisation.find_by(service_owner: true).users
+      Organisation.service_owner.users
     end
   end
 end
