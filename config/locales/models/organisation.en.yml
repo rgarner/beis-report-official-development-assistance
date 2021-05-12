@@ -27,6 +27,10 @@ en:
       organisation:
         name: Name
         iati_reference: International Aid Transparency Initiative (IATI) reference
+  tabs:
+    organisations:
+      delivery_partners: Delivery partners
+      matched_effort_providers: Matched effort providers
   summary:
     label:
       organisation:
@@ -67,6 +71,9 @@ en:
       index: Organisations
       new: Create a new organisation
       show: Organisation %{name}
+    organisations:
+      delivery_partners: Delivery partners
+      matched_effort_providers: Matched effort providers
   activerecord:
     errors:
       models:
