@@ -44,4 +44,8 @@ class Organisation < ApplicationRecord
   def self.service_owner
     find_by(iati_reference: SERVICE_OWNER_IATI_REFERENCE)
   end
+
+  def self.editable_roles
+    (Organisation.roles.keys - ["service_owner"]).map(&:pluralize)
+  end
 end
