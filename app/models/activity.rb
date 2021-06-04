@@ -550,4 +550,10 @@ class Activity < ApplicationRecord
     end
     grouped_projects
   end
+
+  def self.by_report(report)
+    return [] unless report.own_financial_quarter
+
+    self.projects_and_third_party_projects_for_report(report).order(:title, :roda_identifier_fragment)
+  end
 end
