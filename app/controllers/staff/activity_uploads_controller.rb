@@ -45,7 +45,7 @@ class Staff::ActivityUploadsController < Staff::BaseController
   end
 
   private def report
-    @_report ||= Report.find(params[:report_id])
+    @report ||= Report.find(params[:report_id])
   end
 
   private def csv_headers

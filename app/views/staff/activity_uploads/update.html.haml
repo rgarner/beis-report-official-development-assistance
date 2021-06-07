@@ -1,20 +1,29 @@
 = content_for :page_title_prefix, t("page_title.activity.upload")
 
+= render "staff/reports/meta"
+
 %main.govuk-main-wrapper#main-content{ role: "main" }
   .govuk-grid-row
-    .govuk-grid-column-two-thirds
-      %h1.govuk-heading-xl
-        = t("page_title.activity.upload")
+    .govuk-grid-column-full
+      .govuk-tabs
+        %h2.govuk-tabs__title
+          Contents
 
-  - unless @errors.empty?
-    .govuk-grid-row
-      .govuk-grid-column-full
-        = render partial: "error_table"
+        = render partial: "staff/reports/tab_list", locals: { active_tab: "activities" }
 
-  - if @success
-    - if @activities[:created].any?
-      = render partial: "success_table", locals: { action: "created", activities: @activities[:created] }
-    - if @activities[:updated].any?
-      = render partial: "success_table", locals: { action: "updated", activities: @activities[:updated] }
-  - else
-    = render partial: "upload_form"
+        .govuk-tabs__panel
+          %h2.govuk-heading-l
+            = t("page_title.activity.upload")
+
+          - unless @errors.empty?
+            .govuk-grid-row
+              .govuk-grid-column-full
+                = render partial: "error_table"
+
+          - if @success
+            - if @activities[:created].any?
+              = render partial: "success_table", locals: { action: "created", activities: @activities[:created] }
+            - if @activities[:updated].any?
+              = render partial: "success_table", locals: { action: "updated", activities: @activities[:updated] }
+          - else
+            = render partial: "upload_form"
