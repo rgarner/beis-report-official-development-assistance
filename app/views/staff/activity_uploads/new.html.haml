@@ -15,6 +15,9 @@
           %h2.govuk-heading-l
             = t("page_title.activity.upload")
 
+          %p.govuk-body
+            You can use the upload as many times are you need to complete your report.<br>Use the template to ensure your data is in the correct format. See the help centre for more details.
+
           %h3.govuk-heading-m
             = link_to t("action.activity.download.button"), report_activity_upload_path(@report_presenter, format: :csv), class: "govuk-link"
 
