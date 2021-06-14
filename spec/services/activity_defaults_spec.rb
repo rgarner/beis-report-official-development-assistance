@@ -32,8 +32,8 @@ RSpec.describe ActivityDefaults do
         expect(subject[:source_fund_code]).to eq(fund.source_fund.id)
       end
 
-      it "sets the organisation to BEIS" do
-        expect(subject[:organisation_id]).to eq(beis.id)
+      it "sets the organisation to the delivery partner organisation" do
+        expect(subject[:organisation_id]).to eq(delivery_partner_organisation.id)
       end
 
       it "sets the form_state to 'identifier', as we already have the level and parent" do

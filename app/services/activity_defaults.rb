@@ -18,7 +18,7 @@ class ActivityDefaults
       level: level,
       source_fund_code: source_fund_code,
 
-      organisation_id: organisation.id,
+      organisation_id: delivery_partner_organisation.id,
 
       form_state: form_state,
     }
@@ -36,12 +36,6 @@ class ActivityDefaults
 
   def source_fund_code
     parent_activity.source_fund.id
-  end
-
-  def organisation
-    return service_owner if level == "programme"
-
-    delivery_partner_organisation
   end
 
   def form_state

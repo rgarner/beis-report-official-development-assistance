@@ -884,7 +884,7 @@ RSpec.describe Activities::ImportFromCsv do
         new_activity = Activity.order(:created_at).last
 
         expect(new_activity.level).to eq("programme")
-        expect(new_activity.organisation).to eq(beis_organisation)
+        expect(new_activity.organisation).to eq(organisation)
       end
     end
 

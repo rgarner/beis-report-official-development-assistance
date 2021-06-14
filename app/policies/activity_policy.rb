@@ -15,12 +15,14 @@ class ActivityPolicy < ApplicationPolicy
   end
 
   def create_child?
-    return record.fund? if beis_user?
-
-    return false if record.third_party_project?
-    return false unless editable_report?
-
-    record.organisation == user.organisation
+    case record.level
+    when "fund"
+      beis_user?
+    when "programme", "project"
+      editable_report? && record.organisation == user.organisation
+    when "third_party_project"
+      false
+    end
   end
 
   def create_transfer?
@@ -36,15 +38,14 @@ class ActivityPolicy < ApplicationPolicy
   end
 
   def update?
-    return true if beis_user? && record.organisation == user.organisation
-
-    if delivery_partner_user?
-      return false if record.organisation != user.organisation
-      return false if record.fund? || record.programme?
-      return false unless editable_report?
-      return true
+    case record.level
+    when "fund"
+      beis_user?
+    when "programme"
+      beis_user?
+    when "project", "third_party_project"
+      editable_report? && record.organisation == user.organisation
     end
-    false
   end
 
   def redact_from_iati?
