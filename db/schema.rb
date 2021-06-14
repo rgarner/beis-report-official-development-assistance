@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_03_152129) do
+ActiveRecord::Schema.define(version: 2021_06_14_142121) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -31,7 +31,6 @@ ActiveRecord::Schema.define(version: 2021_06_03_152129) do
     t.string "aid_type"
     t.string "form_state", null: false
     t.string "level", null: false
-    t.uuid "extending_organisation_id"
     t.string "recipient_country"
     t.string "geography"
     t.string "previous_identifier"
@@ -76,7 +75,6 @@ ActiveRecord::Schema.define(version: 2021_06_03_152129) do
     t.string "channel_of_delivery_code"
     t.integer "source_fund_code"
     t.integer "gcrf_strategic_area", default: [], array: true
-    t.index ["extending_organisation_id"], name: "index_activities_on_extending_organisation_id"
     t.index ["level"], name: "index_activities_on_level"
     t.index ["organisation_id"], name: "index_activities_on_organisation_id"
     t.index ["parent_id"], name: "index_activities_on_parent_id"
@@ -293,7 +291,6 @@ ActiveRecord::Schema.define(version: 2021_06_03_152129) do
   end
 
   add_foreign_key "activities", "activities", column: "parent_id", on_delete: :restrict
-  add_foreign_key "activities", "organisations", column: "extending_organisation_id"
   add_foreign_key "activities", "organisations", on_delete: :restrict
   add_foreign_key "budgets", "activities", column: "parent_activity_id", on_delete: :cascade
   add_foreign_key "budgets", "organisations", column: "providing_organisation_id"
