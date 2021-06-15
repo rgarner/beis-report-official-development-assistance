@@ -26,5 +26,5 @@
                     = activity.roda_identifier_compound
                   %td{class: "govuk-table__cell"}
                     - if policy(activity).create_child?
-                      = link_to(t("action.activity.add_child"), organisation_activity_children_path(activity.extending_organisation, activity), method: :post, class: "govuk-link govuk-!-margin-right-4")
-                    = link_to(t("default.link.view"), organisation_activity_details_path(activity.extending_organisation, activity), class: "govuk-link govuk-!-margin-right-4")
+                      = link_to(t("action.activity.add_child"), organisation_activity_children_path(activity.organisation, activity), method: :post, class: "govuk-link govuk-!-margin-right-4")
+                    = link_to(t("default.link.view"), organisation_activity_details_path(activity.organisation, activity), class: "govuk-link govuk-!-margin-right-4")

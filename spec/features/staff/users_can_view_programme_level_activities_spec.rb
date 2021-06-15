@@ -26,7 +26,7 @@ RSpec.feature "Users can view programme level activities" do
       fund_activity = create(:fund_activity)
       programme_activity = create(:programme_activity,
         parent: fund_activity,
-        extending_organisation: user.organisation)
+        organisation: user.organisation)
       project = create(:project_activity, parent: programme_activity, organisation: user.organisation)
 
       visit organisation_activity_details_path(user.organisation, project)

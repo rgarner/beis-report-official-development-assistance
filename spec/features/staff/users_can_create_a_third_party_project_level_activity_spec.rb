@@ -5,7 +5,7 @@ RSpec.feature "Users can create a third-party project" do
 
     context "when viewing a project" do
       scenario "a new third party project cannot be added to the programme when a report does not exist" do
-        programme = create(:programme_activity, :gcrf_funded, extending_organisation: user.organisation)
+        programme = create(:programme_activity, :gcrf_funded, organisation: user.organisation)
         project = create(:project_activity, :gcrf_funded, organisation: user.organisation, parent: programme)
 
         visit activities_path
@@ -16,8 +16,8 @@ RSpec.feature "Users can create a third-party project" do
       end
 
       scenario "a new third party project can be added to the project" do
-        programme = create(:programme_activity, :gcrf_funded, extending_organisation: user.organisation)
-        project = create(:project_activity, :gcrf_funded, organisation: user.organisation, extending_organisation: user.organisation, parent: programme)
+        programme = create(:programme_activity, :gcrf_funded, organisation: user.organisation)
+        project = create(:project_activity, :gcrf_funded, organisation: user.organisation, parent: programme)
         _report = create(:report, state: :active, organisation: user.organisation, fund: project.associated_fund)
 
         visit activities_path
@@ -39,8 +39,8 @@ RSpec.feature "Users can create a third-party project" do
 
       context "without an editable report" do
         scenario "a new third party project cannot be added" do
-          programme = create(:programme_activity, :gcrf_funded, extending_organisation: user.organisation)
-          project = create(:project_activity, :gcrf_funded, organisation: user.organisation, extending_organisation: user.organisation, parent: programme)
+          programme = create(:programme_activity, :gcrf_funded, organisation: user.organisation)
+          project = create(:project_activity, :gcrf_funded, organisation: user.organisation, parent: programme)
 
           visit activities_path
 
@@ -52,8 +52,8 @@ RSpec.feature "Users can create a third-party project" do
       end
 
       scenario "the activity saves its identifier as read-only `transparency_identifier`" do
-        programme = create(:programme_activity, :gcrf_funded, extending_organisation: user.organisation)
-        project = create(:project_activity, :gcrf_funded, organisation: user.organisation, extending_organisation: user.organisation, parent: programme)
+        programme = create(:programme_activity, :gcrf_funded, organisation: user.organisation)
+        project = create(:project_activity, :gcrf_funded, organisation: user.organisation, parent: programme)
         _report = create(:report, state: :active, organisation: user.organisation, fund: project.associated_fund)
         identifier = "3rd-party-proj"
 
@@ -71,8 +71,8 @@ RSpec.feature "Users can create a third-party project" do
       end
 
       scenario "third party project creation is tracked with public_activity" do
-        programme = create(:programme_activity, :gcrf_funded, extending_organisation: user.organisation)
-        project = create(:project_activity, :gcrf_funded, organisation: user.organisation, extending_organisation: user.organisation, parent: programme)
+        programme = create(:programme_activity, :gcrf_funded, organisation: user.organisation)
+        project = create(:project_activity, :gcrf_funded, organisation: user.organisation, parent: programme)
         _report = create(:report, state: :active, organisation: user.organisation, fund: project.associated_fund)
 
         PublicActivity.with_tracking do
@@ -95,8 +95,8 @@ RSpec.feature "Users can create a third-party project" do
 
       scenario "a new third party project requires specific fields when the project is Newton-funded" do
         newton_fund = create(:fund_activity, :newton)
-        newton_programme = create(:programme_activity, parent: newton_fund, extending_organisation: user.organisation)
-        newton_project = create(:project_activity, parent: newton_programme, organisation: user.organisation, extending_organisation: user.organisation)
+        newton_programme = create(:programme_activity, parent: newton_fund, organisation: user.organisation)
+        newton_project = create(:project_activity, parent: newton_programme, organisation: user.organisation)
         _report = create(:report, state: :active, organisation: user.organisation, fund: newton_fund)
 
         visit activities_path

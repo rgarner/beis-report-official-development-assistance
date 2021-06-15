@@ -1,7 +1,7 @@
 RSpec.describe "Users can edit an external income" do
   context "when signed in as a delivery partner" do
     let(:user) { create(:delivery_partner_user) }
-    let(:programme) { create(:programme_activity, extending_organisation: user.organisation) }
+    let(:programme) { create(:programme_activity, organisation: user.organisation) }
 
     let!(:project) { create(:project_activity, :with_report, organisation: user.organisation, parent: programme) }
     let!(:external_income_provider) { create(:external_income_provider) }

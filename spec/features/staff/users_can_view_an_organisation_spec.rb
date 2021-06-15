@@ -40,7 +40,7 @@ RSpec.feature "Users can view an organisation" do
       end
 
       scenario "does not see activities which belong to a different organisation" do
-        other_programme = create(:programme_activity, extending_organisation: create(:delivery_partner_organisation))
+        other_programme = create(:programme_activity, organisation: create(:delivery_partner_organisation))
         other_project = create(:project_activity, organisation: create(:delivery_partner_organisation))
 
         visit organisation_path(user.organisation)
@@ -68,7 +68,7 @@ RSpec.feature "Users can view an organisation" do
 
       scenario "cannot add a child activity" do
         gcrf = create(:fund_activity, :gcrf)
-        create(:programme_activity, parent: gcrf, extending_organisation: other_organisation)
+        create(:programme_activity, parent: gcrf, organisation: other_organisation)
         _report = create(:report, :active, fund: gcrf, organisation: other_organisation)
 
         visit organisation_path(other_organisation)
@@ -93,10 +93,10 @@ RSpec.feature "Users can view an organisation" do
 
     scenario "can see a list of their programmes, grouped by fund" do
       newton = create(:fund_activity, :newton)
-      newton_funded_programmes = create_list(:programme_activity, 3, parent: newton, extending_organisation: organisation)
+      newton_funded_programmes = create_list(:programme_activity, 3, parent: newton, organisation: organisation)
 
       gcrf = create(:fund_activity, :gcrf)
-      gcrf_funded_programmes = create_list(:programme_activity, 2, parent: gcrf, extending_organisation: organisation)
+      gcrf_funded_programmes = create_list(:programme_activity, 2, parent: gcrf, organisation: organisation)
 
       visit organisation_path(organisation)
 
@@ -123,7 +123,7 @@ RSpec.feature "Users can view an organisation" do
 
     scenario "clicking the 'view' link goes to the activity details page" do
       gcrf = create(:fund_activity, :gcrf)
-      programme = create(:programme_activity, parent: gcrf, extending_organisation: organisation)
+      programme = create(:programme_activity, parent: gcrf, organisation: organisation)
 
       visit organisation_path(organisation)
 
@@ -141,7 +141,7 @@ RSpec.feature "Users can view an organisation" do
 
     scenario "can create a new child activity for a given programme" do
       gcrf = create(:fund_activity, :gcrf)
-      programme = create(:programme_activity, parent: gcrf, extending_organisation: organisation)
+      programme = create(:programme_activity, parent: gcrf, organisation: organisation)
       _report = create(:report, :active, fund: gcrf, organisation: organisation)
 
       visit organisation_path(organisation)
@@ -158,7 +158,7 @@ RSpec.feature "Users can view an organisation" do
 
     scenario "cannot add a new child activity when a report does not exist" do
       gcrf = create(:fund_activity, :gcrf)
-      programme = create(:programme_activity, parent: gcrf, extending_organisation: organisation)
+      programme = create(:programme_activity, parent: gcrf, organisation: organisation)
 
       visit organisation_path(organisation)
 

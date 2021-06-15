@@ -5,7 +5,7 @@ RSpec.describe "Users can create a forecast" do
     before { authenticate!(user: user) }
 
     scenario "they can add a forecast" do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       project = create(:project_activity, :with_report, organisation: user.organisation, parent: programme)
       visit activities_path
       click_on project.title
@@ -23,7 +23,7 @@ RSpec.describe "Users can create a forecast" do
     end
 
     scenario "they can go back if they try to add a forecast in error" do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       project = create(:project_activity, :with_report, organisation: user.organisation, parent: programme)
       visit activities_path
       click_on project.title
@@ -38,7 +38,7 @@ RSpec.describe "Users can create a forecast" do
     context "when we are in the first quarter" do
       scenario "the current financial quarter and year are pre selected" do
         travel_to_quarter(1, 2019) do
-          programme = create(:programme_activity, extending_organisation: user.organisation)
+          programme = create(:programme_activity, organisation: user.organisation)
           project = create(:project_activity, :with_report, organisation: user.organisation, parent: programme)
           visit activities_path
           click_on project.title
@@ -53,7 +53,7 @@ RSpec.describe "Users can create a forecast" do
     context "when we are in the fourth quarter" do
       scenario "the current financial quarter and year are pre selected" do
         travel_to_quarter(4, 2019) do
-          programme = create(:programme_activity, extending_organisation: user.organisation)
+          programme = create(:programme_activity, organisation: user.organisation)
           project = create(:project_activity, :with_report, organisation: user.organisation, parent: programme)
           visit activities_path
           click_on project.title
@@ -66,7 +66,7 @@ RSpec.describe "Users can create a forecast" do
     end
 
     scenario "the action is recorded with public_activity" do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       activity = create(:project_activity, :with_report, organisation: user.organisation, parent: programme)
 
       PublicActivity.with_tracking do
@@ -97,7 +97,7 @@ RSpec.describe "Users can create a forecast" do
 
     scenario "the forecast is associated with the currently active report" do
       fund = create(:fund_activity)
-      programme = create(:programme_activity, parent: fund, extending_organisation: user.organisation)
+      programme = create(:programme_activity, parent: fund, organisation: user.organisation)
       project = create(:project_activity, organisation: user.organisation, parent: programme)
       report = create(:report, :active, fund: fund, organisation: project.organisation)
 
@@ -113,7 +113,7 @@ RSpec.describe "Users can create a forecast" do
     end
 
     scenario "they cannot add a forecast when no editable report exists" do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       project = create(:project_activity, :with_report, organisation: user.organisation, parent: programme)
       Report.update_all(state: :approved)
 
@@ -126,7 +126,7 @@ RSpec.describe "Users can create a forecast" do
 
     scenario "they receive an error message if the forecast is not in the future" do
       travel_to_quarter(3, 2020) do
-        programme = create(:programme_activity, extending_organisation: user.organisation)
+        programme = create(:programme_activity, organisation: user.organisation)
         project = create(:project_activity, :with_report, organisation: user.organisation, parent: programme)
         visit activities_path
         click_on project.title
@@ -146,7 +146,7 @@ RSpec.describe "Users can create a forecast" do
     end
 
     scenario "they receive an error message if the value is not a valid number" do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       project = create(:project_activity, :with_report, organisation: user.organisation, parent: programme)
       visit activities_path
       click_on project.title

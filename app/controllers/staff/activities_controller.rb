@@ -70,7 +70,7 @@ class Staff::ActivitiesController < Staff::BaseController
        .send(scope)
     )
     unless organisation.service_owner?
-      activities = activities.where(extending_organisation: organisation)
+      activities = activities.where(organisation: organisation)
     end
     activities.order(:roda_identifier_compound)
       .group_by(&:parent)

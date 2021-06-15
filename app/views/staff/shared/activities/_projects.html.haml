@@ -4,7 +4,7 @@
       = t("page_content.activity.projects")
     - if policy(activity).create_child?
       = button_to t("action.activity.add_child"),
-          organisation_activity_children_path(activity.extending_organisation, activity),
+          organisation_activity_children_path(activity.organisation, activity),
           class: "govuk-button"
 
     = render partial: '/staff/shared/projects/table', locals: { projects: activities }

@@ -10,7 +10,7 @@ RSpec.describe ActivityPolicy do
     let(:user) { create(:beis_user) }
 
     context "when the activity is a fund" do
-      let(:activity) { create(:fund_activity, organisation: user.organisation, extending_organisation: user.organisation) }
+      let(:activity) { create(:fund_activity, organisation: user.organisation) }
 
       it { is_expected.to permit_action(:show) }
       it { is_expected.to permit_action(:create) }
@@ -104,7 +104,7 @@ RSpec.describe ActivityPolicy do
 
       context "and the users organisation is the extending organisation" do
         before do
-          activity.update(extending_organisation: user.organisation)
+          activity.update(organisation: user.organisation)
         end
 
         it { is_expected.to permit_action(:show) }
@@ -146,7 +146,7 @@ RSpec.describe ActivityPolicy do
 
       context "and the users organisation is the extending organisation" do
         before do
-          activity.update(organisation: user.organisation, extending_organisation: user.organisation)
+          activity.update(organisation: user.organisation)
         end
 
         context "and there is no editable report for the users organisation" do
@@ -198,7 +198,7 @@ RSpec.describe ActivityPolicy do
 
       context "and the users organisation is the extending organisation" do
         before do
-          activity.update(organisation: user.organisation, extending_organisation: user.organisation)
+          activity.update(organisation: user.organisation)
         end
 
         context "and there is no editable report for the users organisation" do

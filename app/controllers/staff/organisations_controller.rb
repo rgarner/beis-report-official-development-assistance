@@ -30,8 +30,8 @@ class Staff::OrganisationsController < Staff::BaseController
     respond_to do |format|
       format.html do
         @grouped_programmes = Activity.programme
-          .includes(:extending_organisation, :organisation, parent: [:parent])
-          .where(extending_organisation: organisation)
+          .includes(:organisation, parent: [:parent])
+          .where(organisation: organisation)
           .order(:roda_identifier_compound)
           .group_by(&:parent)
       end
@@ -102,7 +102,7 @@ class Staff::OrganisationsController < Staff::BaseController
   private def funds_for_organisation_programmes(organisation_id:)
     fund_ids_for_organisation_programmes = Activity.where(
       level: :programme,
-      extending_organisation_id: organisation_id
+      organisation_id: organisation_id
     ).pluck(:parent_id)
     Activity.find(fund_ids_for_organisation_programmes)
   end

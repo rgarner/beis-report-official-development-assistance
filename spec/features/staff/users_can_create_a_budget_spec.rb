@@ -108,7 +108,7 @@ RSpec.describe "Users can create a budget" do
     let(:programme_activity) {
       create(:programme_activity,
         parent: fund_activity,
-        extending_organisation: user.organisation)
+        organisation: user.organisation)
     }
     let!(:project_activity) {
       create(:project_activity,

@@ -138,7 +138,6 @@ class Activity < ApplicationRecord
 
   has_many :child_activities, foreign_key: "parent_id", class_name: "Activity"
   belongs_to :organisation
-  belongs_to :extending_organisation, foreign_key: "extending_organisation_id", class_name: "Organisation", optional: true
   has_many :implementing_organisations, dependent: :destroy
   validates_associated :implementing_organisations
 
@@ -341,10 +340,6 @@ class Activity < ApplicationRecord
     organisation.default_currency
   end
 
-  def has_extending_organisation?
-    extending_organisation.present?
-  end
-
   def has_implementing_organisations?
     implementing_organisations.any?
   end
@@ -381,7 +376,7 @@ class Activity < ApplicationRecord
   def accountable_organisation
     return service_owner if fund? || programme?
 
-    extending_organisation.is_government? ? service_owner : extending_organisation
+    organisation.is_government? ? service_owner : organisation
   end
 
   def accountable_organisation_name

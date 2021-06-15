@@ -154,7 +154,7 @@ class Staff::ReportsController < Staff::BaseController
 
   def report_activities_sorted_by_level(report)
     Activity
-      .includes(:organisation, :extending_organisation, :implementing_organisations)
+      .includes(:organisation, :implementing_organisations)
       .projects_and_third_party_projects_for_report(report)
       .sort_by { |a| a.level }
   end

@@ -5,7 +5,7 @@ RSpec.feature "Users can create a project" do
 
     context "when viewing a programme" do
       scenario "a new project cannot be added to the programme when a report does not exist" do
-        programme = create(:programme_activity, :newton_funded, extending_organisation: user.organisation)
+        programme = create(:programme_activity, :newton_funded, organisation: user.organisation)
 
         visit activities_path
         click_on programme.title
@@ -15,7 +15,7 @@ RSpec.feature "Users can create a project" do
       end
 
       scenario "a new project can be added to the programme" do
-        programme = create(:programme_activity, :newton_funded, extending_organisation: user.organisation)
+        programme = create(:programme_activity, :newton_funded, organisation: user.organisation)
         _report = create(:report, state: :active, organisation: user.organisation, fund: programme.associated_fund)
 
         visit activities_path
@@ -34,10 +34,10 @@ RSpec.feature "Users can create a project" do
       end
 
       scenario "a new project can be added when the program has no RODA identifier" do
-        programme = create(:programme_activity, :newton_funded, extending_organisation: user.organisation, roda_identifier_fragment: nil)
+        programme = create(:programme_activity, :newton_funded, organisation: user.organisation, roda_identifier_fragment: nil)
         _report = create(:report, state: :active, organisation: user.organisation, fund: programme.associated_fund)
 
-        visit organisation_activity_children_path(programme.extending_organisation, programme)
+        visit organisation_activity_children_path(programme.organisation, programme)
         click_on t("action.activity.add_child")
 
         fill_in_activity_form(level: "project", parent: programme)
@@ -50,11 +50,11 @@ RSpec.feature "Users can create a project" do
       end
 
       scenario "the activity saves its identifier as read-only `transparency_identifier`" do
-        programme = create(:programme_activity, :newton_funded, extending_organisation: user.organisation)
+        programme = create(:programme_activity, :newton_funded, organisation: user.organisation)
         _report = create(:report, state: :active, organisation: user.organisation, fund: programme.associated_fund)
         identifier = "a-project"
 
-        visit organisation_activity_children_path(programme.extending_organisation, programme)
+        visit organisation_activity_children_path(programme.organisation, programme)
         click_on t("action.activity.add_child")
 
         fill_in_activity_form(roda_identifier_fragment: identifier, level: "project", parent: programme)
@@ -64,10 +64,10 @@ RSpec.feature "Users can create a project" do
       end
 
       scenario "the activity date shows an error message if an invalid date is entered" do
-        programme = create(:programme_activity, :gcrf_funded, extending_organisation: user.organisation)
+        programme = create(:programme_activity, :gcrf_funded, organisation: user.organisation)
         _report = create(:report, state: :active, organisation: user.organisation, fund: programme.associated_fund)
 
-        visit organisation_activity_children_path(programme.extending_organisation, programme)
+        visit organisation_activity_children_path(programme.organisation, programme)
         click_on t("action.activity.add_child")
 
         fill_in "activity[delivery_partner_identifier]", with: "no-country-selected"
@@ -98,11 +98,11 @@ RSpec.feature "Users can create a project" do
       end
 
       scenario "project creation is tracked with public_activity" do
-        programme = create(:programme_activity, :newton_funded, extending_organisation: user.organisation)
+        programme = create(:programme_activity, :newton_funded, organisation: user.organisation)
         _report = create(:report, state: :active, organisation: user.organisation, fund: programme.associated_fund)
 
         PublicActivity.with_tracking do
-          visit organisation_activity_children_path(programme.extending_organisation, programme)
+          visit organisation_activity_children_path(programme.organisation, programme)
           click_on t("action.activity.add_child")
 
           fill_in_activity_form(level: "project", delivery_partner_identifier: "my-unique-identifier", parent: programme)
@@ -119,11 +119,11 @@ RSpec.feature "Users can create a project" do
         let(:newton_fund) { create(:fund_activity, :newton) }
 
         scenario "'country_delivery_partners' can be present" do
-          newton_programme = create(:programme_activity, extending_organisation: user.organisation, parent: newton_fund)
+          newton_programme = create(:programme_activity, organisation: user.organisation, parent: newton_fund)
           _report = create(:report, state: :active, organisation: user.organisation, fund: newton_fund)
           identifier = "newton-project"
 
-          visit organisation_activity_children_path(newton_programme.extending_organisation, newton_programme)
+          visit organisation_activity_children_path(newton_programme.organisation, newton_programme)
           click_on t("action.activity.add_child")
 
           fill_in_activity_form(level: "project", roda_identifier_fragment: identifier, parent: newton_programme)
@@ -134,11 +134,11 @@ RSpec.feature "Users can create a project" do
         end
 
         scenario "'country_delivery_partners' is however not mandatory for Newton funded projects" do
-          newton_programme = create(:programme_activity, extending_organisation: user.organisation, parent: newton_fund)
+          newton_programme = create(:programme_activity, organisation: user.organisation, parent: newton_fund)
           _report = create(:report, state: :active, organisation: user.organisation, fund: newton_fund)
           identifier = "newton-project"
 
-          visit organisation_activity_children_path(newton_programme.extending_organisation, newton_programme)
+          visit organisation_activity_children_path(newton_programme.organisation, newton_programme)
           click_on t("action.activity.add_child")
 
           fill_in_activity_form(level: "project", roda_identifier_fragment: identifier, parent: newton_programme, country_delivery_partners: nil)
@@ -151,10 +151,10 @@ RSpec.feature "Users can create a project" do
 
       context "when the aid type is one of 'B02', 'B03'" do
         it "skips the collaboration type step and infers it from the aid type" do
-          programme = create(:programme_activity, :gcrf_funded, extending_organisation: user.organisation)
+          programme = create(:programme_activity, :gcrf_funded, organisation: user.organisation)
           create(:report, state: :active, organisation: user.organisation, fund: programme.associated_fund)
 
-          visit organisation_activity_children_path(programme.extending_organisation, programme)
+          visit organisation_activity_children_path(programme.organisation, programme)
           click_on t("action.activity.add_child")
 
           # Test is done in this method:
@@ -167,10 +167,10 @@ RSpec.feature "Users can create a project" do
 
       context "when the aid type is one of 'D02', 'E01', 'G01'" do
         it "skips the FSTC applies step and infers it from the aid type" do
-          programme = create(:programme_activity, :gcrf_funded, extending_organisation: user.organisation)
+          programme = create(:programme_activity, :gcrf_funded, organisation: user.organisation)
           _report = create(:report, state: :active, organisation: user.organisation, fund: programme.associated_fund)
 
-          visit organisation_activity_children_path(programme.extending_organisation, programme)
+          visit organisation_activity_children_path(programme.organisation, programme)
           click_on t("action.activity.add_child")
 
           # Test is done in this method:
@@ -183,10 +183,10 @@ RSpec.feature "Users can create a project" do
 
       context "when the aid type is 'C01'" do
         it "lets the user choose the FSTC applies option" do
-          programme = create(:programme_activity, :gcrf_funded, extending_organisation: user.organisation)
+          programme = create(:programme_activity, :gcrf_funded, organisation: user.organisation)
           _report = create(:report, state: :active, organisation: user.organisation, fund: programme.associated_fund)
 
-          visit organisation_activity_children_path(programme.extending_organisation, programme)
+          visit organisation_activity_children_path(programme.organisation, programme)
           click_on t("action.activity.add_child")
 
           # Test is done in this method:

@@ -48,7 +48,6 @@ FactoryBot.define do
       level { :fund }
 
       association :organisation, factory: :beis_organisation
-      association :extending_organisation, factory: :beis_organisation
 
       trait :gcrf do
         roda_identifier_fragment { "GCRF" }
@@ -79,7 +78,6 @@ FactoryBot.define do
       collaboration_type { "1" }
 
       association :organisation, factory: :beis_organisation
-      association :extending_organisation, factory: :delivery_partner_organisation
 
       trait :newton_funded do
         source_fund_code { Fund::MAPPINGS["NF"] }
@@ -112,7 +110,6 @@ FactoryBot.define do
       policy_marker_nutrition { "not_assessed" }
 
       association :organisation, factory: :delivery_partner_organisation
-      association :extending_organisation, factory: :delivery_partner_organisation
 
       factory :project_activity_with_implementing_organisations do
         transient do
@@ -156,7 +153,6 @@ FactoryBot.define do
       policy_marker_nutrition { "not_assessed" }
 
       association :organisation, factory: :delivery_partner_organisation
-      association :extending_organisation, factory: :delivery_partner_organisation
 
       trait :newton_funded do
         source_fund_code { Fund::MAPPINGS["NF"] }

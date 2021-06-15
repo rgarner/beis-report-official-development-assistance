@@ -103,7 +103,7 @@ RSpec.feature "Users can view budgets on an activity page" do
 
     context "when the activity is programme level" do
       scenario "budget information is shown on the page" do
-        programme_activity = create(:programme_activity, extending_organisation: user.organisation)
+        programme_activity = create(:programme_activity, organisation: user.organisation)
         project_activity = create(:project_activity, organisation: user.organisation, parent: programme_activity)
         budget = create(:budget, parent_activity: programme_activity)
         budget_presenter = BudgetPresenter.new(budget)
@@ -119,7 +119,7 @@ RSpec.feature "Users can view budgets on an activity page" do
       end
 
       scenario "budget information cannot be edited" do
-        programme_activity = create(:programme_activity, extending_organisation: user.organisation)
+        programme_activity = create(:programme_activity, organisation: user.organisation)
 
         budget = create(:budget, parent_activity: programme_activity)
 
@@ -133,7 +133,7 @@ RSpec.feature "Users can view budgets on an activity page" do
 
     context "when the activity is project level" do
       scenario "budget information is shown on the page" do
-        programme_activity = create(:programme_activity, extending_organisation: user.organisation)
+        programme_activity = create(:programme_activity, organisation: user.organisation)
         project_activity = create(:project_activity, parent: programme_activity, organisation: user.organisation)
 
         budget = create(:budget, parent_activity: project_activity)
@@ -149,7 +149,7 @@ RSpec.feature "Users can view budgets on an activity page" do
       end
 
       scenario "a delivery partner can edit/create a budget" do
-        programme_activity = create(:programme_activity, extending_organisation: user.organisation)
+        programme_activity = create(:programme_activity, organisation: user.organisation)
         report = create(:report, state: :active, organisation: user.organisation, fund: programme_activity.associated_fund)
         project_activity = create(:project_activity, parent: programme_activity, organisation: user.organisation)
 

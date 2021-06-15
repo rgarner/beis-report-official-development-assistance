@@ -28,7 +28,7 @@ RSpec.feature "Users can view activities" do
 
     scenario "they can view another organisations activities" do
       delivery_partner = create(:delivery_partner_organisation)
-      activity = create(:programme_activity, extending_organisation: delivery_partner)
+      activity = create(:programme_activity, organisation: delivery_partner)
 
       visit activities_path(organisation_id: activity.organisation)
 
@@ -48,7 +48,7 @@ RSpec.feature "Users can view activities" do
     context "when the organisation id query parameter is not the BEIS organisation id" do
       scenario "it shows the supplied organisation activities" do
         delivery_partner = create(:delivery_partner_organisation)
-        activity = create(:programme_activity, extending_organisation: delivery_partner)
+        activity = create(:programme_activity, organisation: delivery_partner)
 
         visit activities_path(organisation_id: delivery_partner.id)
         expect(page).to have_content activity.roda_identifier
@@ -57,7 +57,7 @@ RSpec.feature "Users can view activities" do
 
     context "when the organisation id query parameter is not a know organisation" do
       scenario "it defaults to showing the current users organisation activities" do
-        activity = create(:programme_activity, extending_organisation: user.organisation)
+        activity = create(:programme_activity, organisation: user.organisation)
 
         visit activities_path(organisation_id: "this-is-no-a-know-organisation")
 
@@ -71,7 +71,7 @@ RSpec.feature "Users can view activities" do
     before { authenticate!(user: user) }
 
     scenario "the page displays two tabs, one for current activities and one for historic ones" do
-      create_list(:programme_activity, 5, extending_organisation: user.organisation)
+      create_list(:programme_activity, 5, organisation: user.organisation)
       visit activities_path
 
       expect(page).to have_css(".govuk-tabs__tab", count: 2)
@@ -80,10 +80,10 @@ RSpec.feature "Users can view activities" do
     end
 
     scenario "they see a list of all current activities" do
-      current_programme = create(:programme_activity, extending_organisation: user.organisation)
+      current_programme = create(:programme_activity, organisation: user.organisation)
       current_project = create(:project_activity, organisation: user.organisation, parent: current_programme)
       another_current_project = create(:project_activity, :at_purpose_step, organisation: user.organisation, parent: current_programme)
-      historic_programme = create(:programme_activity, extending_organisation: user.organisation, programme_status: "completed")
+      historic_programme = create(:programme_activity, organisation: user.organisation, programme_status: "completed")
       historic_project = create(:project_activity, organisation: user.organisation, programme_status: "completed", parent: historic_programme)
 
       visit activities_path
@@ -99,9 +99,9 @@ RSpec.feature "Users can view activities" do
     end
 
     scenario "they can choose to see a list of historic activities" do
-      current_programme = create(:programme_activity, extending_organisation: user.organisation)
+      current_programme = create(:programme_activity, organisation: user.organisation)
       current_project = create(:project_activity, organisation: user.organisation, parent: current_programme)
-      historic_programme = create(:programme_activity, extending_organisation: user.organisation, programme_status: "completed")
+      historic_programme = create(:programme_activity, organisation: user.organisation, programme_status: "completed")
       historic_project = create(:project_activity, organisation: user.organisation, programme_status: "completed", parent: historic_programme)
       another_historic_project = create(:project_activity, organisation: user.organisation, programme_status: "stopped", parent: historic_programme)
 
@@ -114,7 +114,7 @@ RSpec.feature "Users can view activities" do
     end
 
     scenario "they see a list of all their projects" do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       project = create(:project_activity, organisation: user.organisation, parent: programme)
 
       visit activities_path
@@ -126,7 +126,7 @@ RSpec.feature "Users can view activities" do
     end
 
     scenario "the list of projects is ordered by created_at (oldest first)" do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       project = create(:project_activity, organisation: user.organisation, parent: programme)
       another_project = create(:project_activity, organisation: user.organisation, created_at: 2.days.ago, parent: programme)
 
@@ -137,7 +137,7 @@ RSpec.feature "Users can view activities" do
     end
 
     scenario "they do not see a Publish to Iati column & status against projects" do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       project = create(:project_activity, organisation: user.organisation, parent: programme)
 
       visit activities_path
@@ -179,7 +179,7 @@ RSpec.feature "Users can view activities" do
     end
 
     scenario "all activities can be viewed" do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       activities = create_list(:project_activity, 5, organisation: user.organisation, parent: programme)
 
       visit activities_path(organisation_id: user.organisation)
@@ -195,7 +195,7 @@ RSpec.feature "Users can view activities" do
     end
 
     scenario "an activity can be viewed" do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       activity = create(:project_activity, parent: programme, organisation: user.organisation, sdgs_apply: true, sdg_1: 5)
 
       visit activities_path
@@ -223,7 +223,7 @@ RSpec.feature "Users can view activities" do
     context "when the organisation id query parameter is not the delivery_partners organisation id" do
       scenario "it defaults to showing the current users organisation activities" do
         another_delivery_partner = create(:delivery_partner_organisation)
-        programme = create(:programme_activity, extending_organisation: user.organisation)
+        programme = create(:programme_activity, organisation: user.organisation)
         activity = create(:project_activity, organisation: user.organisation, parent: programme)
 
         visit activities_path(organisation_id: another_delivery_partner.id)
@@ -262,7 +262,7 @@ RSpec.feature "Users can view activities" do
     end
 
     scenario "they can expand and collapse the rows to see child activities", js: true do
-      programme = create(:programme_activity, extending_organisation: user.organisation)
+      programme = create(:programme_activity, organisation: user.organisation)
       project = create(:project_activity, organisation: user.organisation, parent: programme)
       third_party_project = create(:third_party_project_activity, organisation: user.organisation, parent: project)
 

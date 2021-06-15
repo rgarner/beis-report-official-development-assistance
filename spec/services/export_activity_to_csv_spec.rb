@@ -78,7 +78,7 @@ RSpec.describe ExportActivityToCsv do
     expect(export_service.headers).to include("Delivery partner short name")
 
     column_position = export_service.headers.index("Delivery partner short name")
-    expect(export_service.call[column_position]).to eql project.extending_organisation.beis_organisation_reference
+    expect(export_service.call[column_position]).to eql project.organisation.beis_organisation_reference
   end
 
   context "when the project has a BEIS identifier" do

@@ -38,9 +38,9 @@ RSpec.shared_examples "valid activity XML" do
 
   it "contains the extending organisation XML" do
     visit organisation_activity_path(organisation, activity, format: :xml)
-    expect(xml.at("iati-activity/participating-org[@role = '3']/@ref").text).to eq(activity.extending_organisation.iati_reference)
-    expect(xml.at("iati-activity/participating-org[@role = '3']/@type").text).to eq(activity.extending_organisation.organisation_type)
-    expect(xml.at("iati-activity/participating-org[@role = '3']/narrative").text).to eq(activity.extending_organisation.name)
+    expect(xml.at("iati-activity/participating-org[@role = '3']/@ref").text).to eq(activity.organisation.iati_reference)
+    expect(xml.at("iati-activity/participating-org[@role = '3']/@type").text).to eq(activity.organisation.organisation_type)
+    expect(xml.at("iati-activity/participating-org[@role = '3']/narrative").text).to eq(activity.organisation.name)
   end
 
   it "contains the implementing organisations XML" do

@@ -14,9 +14,8 @@
       %narrative= activity.funding_organisation.name
   %participating-org{"ref" => activity.accountable_organisation_reference, "type" => activity.accountable_organisation_type, "role" => 2}
     %narrative= activity.accountable_organisation_name
-  - if activity.has_extending_organisation?
-    %participating-org{"ref" => activity.extending_organisation.iati_reference, "type" => activity.extending_organisation.organisation_type, "role" => 3}
-      %narrative= activity.extending_organisation.name
+  %participating-org{"ref" => activity.organisation.iati_reference, "type" => activity.organisation.organisation_type, "role" => 3}
+    %narrative= activity.organisation.name
   - if activity.has_implementing_organisations?
     - activity.implementing_organisations.each do |organisation|
       %participating-org{"ref" => organisation.reference, "type" => organisation.organisation_type, "role" => 4}

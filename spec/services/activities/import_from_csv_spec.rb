@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Activities::ImportFromCsv do
   let(:organisation) { create(:delivery_partner_organisation) }
   let(:uploader) { create(:delivery_partner_user, organisation: organisation) }
-  let(:parent_activity) { create(:programme_activity, :newton_funded, extending_organisation: organisation) }
+  let(:parent_activity) { create(:programme_activity, :newton_funded) }
 
   # NB: 'let!' to prevent `to change { Activity.count }` from giving confusing results
   let!(:existing_activity) do
@@ -885,7 +885,6 @@ RSpec.describe Activities::ImportFromCsv do
 
         expect(new_activity.level).to eq("programme")
         expect(new_activity.organisation).to eq(beis_organisation)
-        expect(new_activity.extending_organisation).to eq(organisation)
       end
     end
 

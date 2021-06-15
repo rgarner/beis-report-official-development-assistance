@@ -19,40 +19,35 @@ delivery_partner = User.all.find(&:delivery_partner?).organisation
 first_programme_params = FactoryBot.build(:programme_activity,
   title: "International Partnerships",
   organisation: beis,
-  parent: gcrf_fund,
-  extending_organisation: delivery_partner).attributes
+  parent: gcrf_fund).attributes
 
 programme = Activity.find_or_create_by(first_programme_params)
 
 second_programme_params = FactoryBot.build(:programme_activity,
   title: "Africa Catalyst Programme",
   organisation: beis,
-  parent: gcrf_fund,
-  extending_organisation: delivery_partner).attributes
+  parent: gcrf_fund).attributes
 
 Activity.find_or_create_by(second_programme_params)
 
 first_project_params = FactoryBot.build(:project_activity,
   title: "Airbus Flood and Drought",
   organisation: delivery_partner,
-  parent: programme,
-  extending_organisation: delivery_partner).attributes
+  parent: programme).attributes
 
 first_project = Activity.find_or_create_by(first_project_params)
 
 second_project_params = FactoryBot.build(:project_activity,
   title: "Second Project - no children",
   organisation: delivery_partner,
-  parent: programme,
-  extending_organisation: delivery_partner).attributes
+  parent: programme).attributes
 
 Activity.find_or_create_by(second_project_params)
 
 third_project_params = FactoryBot.build(:project_activity,
   title: "Third Project - 1 child",
   organisation: delivery_partner,
-  parent: programme,
-  extending_organisation: delivery_partner).attributes
+  parent: programme).attributes
 
 third_project = Activity.find_or_create_by(third_project_params)
 
@@ -60,8 +55,7 @@ third_project = Activity.find_or_create_by(third_project_params)
   third_party_project_params = FactoryBot.build(:third_party_project_activity,
     title: "Something good #{i}",
     organisation: delivery_partner,
-    parent: first_project,
-    extending_organisation: delivery_partner).attributes
+    parent: first_project).attributes
 
   Activity.find_or_create_by(third_party_project_params)
 end
@@ -69,8 +63,7 @@ end
 third_party_project_params = FactoryBot.build(:third_party_project_activity,
   title: "Only child",
   organisation: delivery_partner,
-  parent: third_project,
-  extending_organisation: delivery_partner).attributes
+  parent: third_project).attributes
 
 Activity.find_or_create_by(third_party_project_params)
 

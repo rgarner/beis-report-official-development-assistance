@@ -15,7 +15,7 @@ RSpec.feature "Users can filter activities" do
 
     scenario "they can filter the activities to an organisation" do
       delivery_partner_organisation = create(:delivery_partner_organisation)
-      programme = create(:programme_activity, extending_organisation: delivery_partner_organisation)
+      programme = create(:programme_activity, organisation: delivery_partner_organisation)
       project = create(:project_activity, organisation: delivery_partner_organisation, parent: programme)
 
       visit activities_path
@@ -32,9 +32,9 @@ RSpec.feature "Users can filter activities" do
 
     scenario "they will see Current activities if they filter while on the 'Current' tab" do
       delivery_partner_organisation = create(:delivery_partner_organisation)
-      current_programme = create(:programme_activity, extending_organisation: delivery_partner_organisation)
+      current_programme = create(:programme_activity, organisation: delivery_partner_organisation)
       current_project = create(:project_activity, organisation: delivery_partner_organisation, parent: current_programme)
-      historic_programme = create(:programme_activity, extending_organisation: delivery_partner_organisation, programme_status: "cancelled")
+      historic_programme = create(:programme_activity, organisation: delivery_partner_organisation, programme_status: "cancelled")
       historic_project = create(:project_activity, organisation: delivery_partner_organisation, programme_status: "cancelled", parent: historic_programme)
 
       visit activities_path
@@ -50,9 +50,9 @@ RSpec.feature "Users can filter activities" do
 
     scenario "they will see Historic activities if they filter while on the 'Historic' tab" do
       delivery_partner_organisation = create(:delivery_partner_organisation)
-      current_programme = create(:programme_activity, extending_organisation: delivery_partner_organisation)
+      current_programme = create(:programme_activity, organisation: delivery_partner_organisation)
       current_project = create(:project_activity, organisation: delivery_partner_organisation, parent: current_programme)
-      historic_programme = create(:programme_activity, extending_organisation: delivery_partner_organisation, programme_status: "cancelled")
+      historic_programme = create(:programme_activity, organisation: delivery_partner_organisation, programme_status: "cancelled")
       historic_project = create(:project_activity, organisation: delivery_partner_organisation, programme_status: "cancelled", parent: historic_programme)
 
       visit historic_activities_path

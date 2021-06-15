@@ -2,7 +2,7 @@ class ActivityPolicy < ApplicationPolicy
   def show?
     return true if beis_user?
     return true if record.organisation == user.organisation
-    return true if record.programme? && record.extending_organisation_id == user.organisation.id
+    return true if record.programme? && record.organisation_id == user.organisation.id
     false
   end
 
@@ -20,7 +20,7 @@ class ActivityPolicy < ApplicationPolicy
     return false if record.third_party_project?
     return false unless editable_report?
 
-    record.extending_organisation == user.organisation
+    record.organisation == user.organisation
   end
 
   def create_transfer?
@@ -71,7 +71,7 @@ class ActivityPolicy < ApplicationPolicy
 
     Report.editable.where(
       fund_id: fund.id,
-      organisation_id: [record.extending_organisation_id, record.organisation_id]
+      organisation_id: record.organisation_id
     ).exists?
   end
 end

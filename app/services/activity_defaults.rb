@@ -19,7 +19,6 @@ class ActivityDefaults
       source_fund_code: source_fund_code,
 
       organisation_id: organisation.id,
-      extending_organisation_id: extending_organisation.id,
 
       form_state: form_state,
     }
@@ -42,10 +41,6 @@ class ActivityDefaults
   def organisation
     return service_owner if level == "programme"
 
-    delivery_partner_organisation
-  end
-
-  def extending_organisation
     delivery_partner_organisation
   end
 

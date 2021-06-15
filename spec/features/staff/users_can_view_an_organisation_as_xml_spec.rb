@@ -22,8 +22,8 @@ RSpec.feature "Users can view an organisation as XML" do
         scenario "they can see the download xml button for programmes" do
           fund = create(:fund_activity)
           another_fund = create(:fund_activity)
-          _programme = create(:programme_activity, parent: fund, extending_organisation: organisation)
-          _anohter_programme = create(:programme_activity, parent: another_fund, extending_organisation: organisation)
+          _programme = create(:programme_activity, parent: fund, organisation: organisation)
+          _anohter_programme = create(:programme_activity, parent: another_fund, organisation: organisation)
 
           visit organisation_path(organisation)
 
@@ -142,7 +142,7 @@ RSpec.feature "Users can view an organisation as XML" do
       scenario "the XML file does not contain fund or programme activities in the organisation" do
         beis = create(:beis_organisation)
         _fund = create(:fund_activity, organisation: beis)
-        _programme = create(:programme_activity, extending_organisation: organisation)
+        _programme = create(:programme_activity, organisation: organisation)
 
         visit organisation_path(organisation, format: :xml)
         xml = Nokogiri::XML::Document.parse(page.body)
@@ -179,7 +179,7 @@ RSpec.feature "Users can view an organisation as XML" do
         end
 
         it "sums up the total forecasts of all the programmes and their child activities by quarter" do
-          programme = create(:programme_activity, extending_organisation: organisation)
+          programme = create(:programme_activity, organisation: organisation)
 
           project_1 = create(:project_activity, parent: programme, organisation: organisation)
           third_party_project_1 = create(:third_party_project_activity, parent: project_1, organisation: organisation)
@@ -209,8 +209,8 @@ RSpec.feature "Users can view an organisation as XML" do
         end
 
         it "sums up the total transactions of all the programmes and their child activities by quarter" do
-          programme = create(:programme_activity, :with_transparency_identifier, extending_organisation: organisation, delivery_partner_identifier: "IND-ENT-IFIER")
-          other_programme = create(:programme_activity, parent: programme.parent, extending_organisation: organisation)
+          programme = create(:programme_activity, :with_transparency_identifier, organisation: organisation, delivery_partner_identifier: "IND-ENT-IFIER")
+          other_programme = create(:programme_activity, parent: programme.parent, organisation: organisation)
 
           activity_projects = create_list(:project_activity, 2, parent: programme)
           activity_third_party_project = create(:third_party_project_activity, parent: activity_projects[0])
@@ -278,7 +278,7 @@ RSpec.feature "Users can view an organisation as XML" do
       end
 
       scenario "they do not see the programmes download buttons" do
-        programme = create(:programme_activity, extending_organisation: organisation)
+        programme = create(:programme_activity, organisation: organisation)
         _project = create(:project_activity, parent: programme, organisation: organisation)
         fund = programme.parent
 

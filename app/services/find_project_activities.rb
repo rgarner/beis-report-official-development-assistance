@@ -11,7 +11,7 @@ class FindProjectActivities
   def call
     projects = ProjectPolicy::Scope.new(user, Activity.project)
       .resolve
-      .includes(:organisation, :extending_organisation, :implementing_organisations, :budgets, :parent)
+      .includes(:organisation, :implementing_organisations, :budgets, :parent)
       .order("created_at ASC")
 
     projects = if organisation.service_owner?

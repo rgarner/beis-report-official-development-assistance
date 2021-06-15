@@ -281,7 +281,7 @@ RSpec.feature "Users can create a transaction" do
       fund_activity = create(:fund_activity, :with_report)
       programme_activity = create(:programme_activity,
         parent: fund_activity,
-        extending_organisation: user.organisation)
+        organisation: user.organisation)
 
       visit organisation_activity_path(programme_activity.organisation, programme_activity)
 

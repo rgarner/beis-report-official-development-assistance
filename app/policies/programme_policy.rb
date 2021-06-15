@@ -24,7 +24,7 @@ class ProgrammePolicy < ApplicationPolicy
       if user.organisation.service_owner?
         scope.all
       else
-        scope.where(extending_organisation: user.organisation)
+        scope.where(organisation: user.organisation)
       end
     end
   end

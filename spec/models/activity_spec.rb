@@ -822,7 +822,6 @@ RSpec.describe Activity, type: :model do
   describe "associations" do
     it { should belong_to(:organisation) }
     it { should have_many(:child_activities).with_foreign_key("parent_id") }
-    it { should belong_to(:extending_organisation).with_foreign_key("extending_organisation_id").optional }
     it { should have_many(:implementing_organisations) }
     it { should have_many(:budgets) }
     it { should have_many(:transactions) }
@@ -938,20 +937,6 @@ RSpec.describe Activity, type: :model do
     end
   end
 
-  describe "#has_extending_organisation?" do
-    it "returns true if all extending_organisation fields are present" do
-      activity = build(:fund_activity)
-
-      expect(activity.has_extending_organisation?).to be true
-    end
-  end
-
-  it "returns false if all extending_organisation fields are not present" do
-    activity = build(:project_activity, extending_organisation: nil)
-
-    expect(activity.has_extending_organisation?).to be false
-  end
-
   describe "#has_implementing_organisation?" do
     it "returns true when there is one or more implementing organisationg" do
       activity = create(:project_activity_with_implementing_organisations)
@@ -1054,17 +1039,17 @@ RSpec.describe Activity, type: :model do
     end
 
     it "returns BEIS if the activity is a programme" do
-      activity = build_stubbed(:programme_activity, extending_organisation: delivery_partner)
+      activity = build_stubbed(:programme_activity, organisation: delivery_partner)
       expect(activity.accountable_organisation).to eql beis
     end
 
     it "returns BEIS if the activity is a project" do
-      activity = build_stubbed(:project_activity, extending_organisation: delivery_partner)
+      activity = build_stubbed(:project_activity, organisation: delivery_partner)
       expect(activity.accountable_organisation).to eql beis
     end
 
     it "returns BEIS if the activity is a third-party project" do
-      activity = build_stubbed(:third_party_project_activity, extending_organisation: delivery_partner)
+      activity = build_stubbed(:third_party_project_activity, organisation: delivery_partner)
       expect(activity.accountable_organisation).to eql beis
     end
 
@@ -1072,12 +1057,12 @@ RSpec.describe Activity, type: :model do
       let(:delivery_partner) { build_stubbed(:delivery_partner_organisation, :non_government) }
 
       it "returns the delivery partner if the activity is a project" do
-        activity = build_stubbed(:project_activity, extending_organisation: delivery_partner)
+        activity = build_stubbed(:project_activity, organisation: delivery_partner)
         expect(activity.accountable_organisation).to eql delivery_partner
       end
 
       it "returns the delivery partner if the activity is a third-party project" do
-        activity = build_stubbed(:third_party_project_activity, extending_organisation: delivery_partner)
+        activity = build_stubbed(:third_party_project_activity, organisation: delivery_partner)
         expect(activity.accountable_organisation).to eql delivery_partner
       end
     end
@@ -1086,7 +1071,7 @@ RSpec.describe Activity, type: :model do
   describe "accountable_organisation_* getters" do
     let(:beis) { build_stubbed(:beis_organisation) }
     let(:delivery_partner) { build_stubbed(:delivery_partner_organisation, :non_government) }
-    let(:activity) { build_stubbed(:project_activity, extending_organisation: delivery_partner) }
+    let(:activity) { build_stubbed(:project_activity, organisation: delivery_partner) }
 
     before do
       allow_any_instance_of(Activity).to receive(:service_owner).and_return(beis)
@@ -1830,7 +1815,7 @@ RSpec.describe Activity, type: :model do
       context "when the activity is a programme" do
         it "sums up the transactions of the activity and child activities by financial quarter" do
           organisation = create(:delivery_partner_organisation)
-          programme = create(:programme_activity, :with_transparency_identifier, extending_organisation: organisation, delivery_partner_identifier: "IND-ENT-IFIER")
+          programme = create(:programme_activity, :with_transparency_identifier, organisation: organisation, delivery_partner_identifier: "IND-ENT-IFIER")
           projects = create_list(:project_activity, 2, parent: programme)
           third_party_project = create(:third_party_project_activity, parent: projects[0])
 
