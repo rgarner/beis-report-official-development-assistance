@@ -183,23 +183,29 @@ RSpec.describe Report, type: :model do
   end
 
   describe "#activities_created" do
-    it "only returns activities created in the given reporting period" do
-      fund = create(:fund_activity)
-      programme = create(:programme_activity, parent: fund)
-
+    let(:report) do
       travel_to(Date.parse("2020-04-26")) do
-        @report = create(:report, organisation: build(:delivery_partner_organisation), fund: fund)
-        @project_in_reporting_period = create(:project_activity, parent: programme, organisation: @report.organisation)
-        @third_party_project_in_reporting_period = create(:third_party_project_activity, parent: @project_in_reporting_period, organisation: @report.organisation)
+        Report.new
       end
+    end
 
-      _project_outside_reporting_period = create(:project_activity, parent: programme, organisation: @report.organisation)
-      _third_party_project_outside_reporting_period = create(:third_party_project_activity, parent: @project_in_reporting_period, organisation: @report.organisation)
+    let(:active_relation) { double("active_relation") }
+    let(:query) { double("query", where: active_relation) }
+    let(:finder) { instance_double(ReportableActivityFinder, call: query) }
 
-      expect(@report.activities_created).to match_array([
-        @project_in_reporting_period,
-        @third_party_project_in_reporting_period,
-      ])
+    before do
+      allow(ReportableActivityFinder).to receive(:new).and_return(finder)
+    end
+
+    it "filters the #reportable_activities using the financial period" do
+      report.activities_created
+
+      expect(query).to have_received(:where)
+        .with(created_at: (Date.parse("01-Apr-2020")..Date.parse("30-Jun-2020")))
+    end
+
+    it "returns the active_relation" do
+      expect(report.activities_created).to eq(active_relation)
     end
   end
 

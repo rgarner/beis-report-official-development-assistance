@@ -84,7 +84,10 @@ class Report < ApplicationRecord
   end
 
   def activities_created
-    reportable_activities.where(created_at: financial_period)
+    ReportableActivityFinder
+      .new(report: self)
+      .call
+      .where(created_at: financial_period)
   end
 
   def activities_updated
