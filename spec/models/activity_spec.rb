@@ -257,21 +257,18 @@ RSpec.describe Activity, type: :model do
 
           it "is invalid if it has the same fragment identifier as a sibling activity" do
             programme = build(:programme_activity, parent: fund_a, roda_identifier_fragment: "B-CCC")
-            programme.cache_roda_identifier!
 
             expect(programme).not_to be_valid
           end
 
           it "is invalid if it has the same compound identifier as a cousin activity" do
             programme = build(:programme_activity, parent: fund_b, roda_identifier_fragment: "CCC")
-            programme.cache_roda_identifier!
 
             expect(programme).not_to be_valid
           end
 
           it "is valid if its identifier is different to all others" do
             programme = build(:programme_activity, parent: fund_b, roda_identifier_fragment: "VALID")
-            programme.cache_roda_identifier!
 
             expect(programme).to be_valid
           end
@@ -1257,61 +1254,6 @@ RSpec.describe Activity, type: :model do
     it "is false if the grandparent identifier is missing" do
       fund.update!(roda_identifier_fragment: nil)
       expect(project.can_set_roda_identifier?).to be(false)
-    end
-  end
-
-  describe "#cache_roda_identifier!" do
-    let!(:fund) { create(:fund_activity, roda_identifier_fragment: "Lvl/A") }
-    let!(:programme) { create(:programme_activity, parent: fund, roda_identifier_fragment: "Level/B") }
-    let!(:project) { create(:project_activity, parent: programme, roda_identifier_fragment: "Level/C") }
-    let!(:third_party_project) { create(:third_party_project_activity, parent: project, roda_identifier_fragment: "Level/D") }
-
-    before do
-      project.write_attribute(:roda_identifier_compound, nil)
-      third_party_project.write_attribute(:roda_identifier_compound, nil)
-    end
-
-    it "raises an exception if roda_identifier_compound is overwritten" do
-      expect { fund.cache_roda_identifier! }.to raise_error(TypeError, "Activity #{fund.id} already has a compound RODA identifier")
-    end
-
-    it "caches the compound RODA identifier on a project" do
-      project.cache_roda_identifier!
-      expect(project.roda_identifier_compound).to eq("Lvl/A-Level/B-Level/C")
-    end
-
-    it "caches the transparency identifier on a project" do
-      project.cache_roda_identifier!
-      expect(project.transparency_identifier).to eq("GB-GOV-13-Lvl-A-Level-B-Level-C")
-    end
-
-    it "caches the compound RODA identifier on a third-party project" do
-      third_party_project.cache_roda_identifier!
-      expect(third_party_project.roda_identifier_compound).to eq("Lvl/A-Level/B-Level/CLevel/D")
-    end
-
-    context "when the activity does not have a RODA identifier fragment" do
-      before { project.update!(roda_identifier_fragment: nil) }
-
-      it "raises an exception" do
-        expect { project.cache_roda_identifier! }.to raise_error(TypeError)
-      end
-    end
-
-    context "when the activity's parent does not have a RODA identifier fragment" do
-      before { programme.update!(roda_identifier_fragment: nil) }
-
-      it "raises an exception" do
-        expect { project.cache_roda_identifier! }.to raise_error(TypeError)
-      end
-    end
-
-    context "when the activity's grandparent does not have a RODA identifier fragment" do
-      before { fund.update!(roda_identifier_fragment: nil) }
-
-      it "raises an exception" do
-        expect { project.cache_roda_identifier! }.to raise_error(TypeError)
-      end
     end
   end
 

@@ -431,29 +431,6 @@ class Activity < ApplicationRecord
     identifier_fragments[0..-2].all?(&:present?) && identifier_fragments.last.blank?
   end
 
-  def cache_roda_identifier
-    identifier_fragments = roda_identifier_fragment_chain
-    return false unless identifier_fragments.all?(&:present?)
-
-    compound = identifier_fragments[0..2].join("-")
-    compound << identifier_fragments[3] if identifier_fragments.size == 4
-
-    self.roda_identifier_compound = compound
-
-    self.transparency_identifier ||= [
-      Organisation::SERVICE_OWNER_IATI_REFERENCE,
-      compound.gsub(/[^a-z0-9-]+/i, "-"),
-    ].join("-")
-
-    true
-  end
-
-  def cache_roda_identifier!
-    unless cache_roda_identifier
-      raise TypeError, "Attempted to generate a RODA ID but some parent identifiers are blank"
-    end
-  end
-
   def roda_identifier_compound=(roda_identifier)
     if roda_identifier_compound.blank?
       super

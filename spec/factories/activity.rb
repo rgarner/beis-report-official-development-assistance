@@ -34,7 +34,9 @@ FactoryBot.define do
     form_state { "complete" }
 
     before(:create) do |activity|
-      activity.cache_roda_identifier
+      if activity.parent.present?
+        activity.roda_identifier_compound = Activity::RodaIdentifierGenerator.new(activity.parent).generate
+      end
     end
 
     trait :with_report do
