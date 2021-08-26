@@ -10,6 +10,11 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ci_node_total: [4]
+        ci_node_index: [0, 1, 2, 3]
     steps:
       - uses: actions/checkout@v2
       - id: cache-docker
@@ -22,6 +27,9 @@ jobs:
         if: steps.cache-docker.outputs.cache-hit == 'true'
       - name: Run tests
         run: script/cibuild
+        env:
+          CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
+          CI_NODE_INDEX: ${{ matrix.ci_node_index }}
       - name: Test terraform scripts
         run: script/terraform_test
       - name: Prepare Docker cache

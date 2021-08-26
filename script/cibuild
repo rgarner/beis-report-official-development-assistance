@@ -6,4 +6,7 @@ docker-compose -f docker-compose.test.yml build
 docker-compose -f docker-compose.test.yml run \
   -e CI=true \
   -e COVERALLS_REPO_TOKEN="$COVERALLS_REPO_TOKEN" \
-  test script/test
+  -e CI_NODE_TOTAL="$CI_NODE_TOTAL" \
+  -e CI_NODE_INDEX="$CI_NODE_INDEX" \
+  -e GITHUB_SHA="$GITHUB_SHA" \
+  test script/parallel_tests
