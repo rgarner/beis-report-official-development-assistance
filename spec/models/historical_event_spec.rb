@@ -21,7 +21,7 @@ RSpec.describe HistoricalEvent, type: :model do
     end
 
     context "when the change being tracked is on a Transaction" do
-      let(:trackable) { create(:transaction) }
+      let(:trackable) { create(:actual) }
       let(:event) { HistoricalEvent.new(trackable: trackable) }
 
       it "associates with the expected Transaction object" do
