@@ -6,4 +6,10 @@ class HistoricalEvent < ApplicationRecord
 
   serialize :new_value
   serialize :previous_value
+
+  before_create :set_trackable_type
+
+  def set_trackable_type
+    self.trackable_type = trackable.class.to_s
+  end
 end
