@@ -15,7 +15,7 @@ class Staff::Exports::OrganisationsController < Staff::BaseController
     @xml_downloads = Iati::XmlDownload.all_for_organisation(@organisation)
   end
 
-  def transactions
+  def actuals
     respond_to do |format|
       format.csv do
         activities = Activity.where(organisation: @organisation)
