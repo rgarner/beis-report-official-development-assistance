@@ -12,10 +12,10 @@ RSpec.feature "Users can create a refund" do
 
       click_on t("page_content.refund.button.create")
 
-      fill_in "refund[value]", with: "100"
-      choose "4", name: "refund[financial_quarter]"
-      select "2019-2020", from: "refund[financial_year]"
-      fill_in "refund[comment]", with: "Comment goes here"
+      fill_in "refund_form[value]", with: "100"
+      choose "4", name: "refund_form[financial_quarter]"
+      select "2019-2020", from: "refund_form[financial_year]"
+      fill_in "refund_form[comment]", with: "Comment goes here"
 
       expect { click_on(t("default.button.submit")) }.to change(Refund, :count).by(1)
 
@@ -27,6 +27,12 @@ RSpec.feature "Users can create a refund" do
         expect(page).to have_content("Q4 2019-2020")
         expect(page).to have_content("£100")
       end
+    end
+
+    scenario "must supply the required information to create a refund" do
+      given_i_am_on_the_new_refund_form
+      and_i_submit_the_new_refund_form_incorrectly
+      then_i_expect_to_see_how_i_need_to_correct_the_refund_form
     end
   end
 
@@ -42,5 +48,24 @@ RSpec.feature "Users can create a refund" do
       let(:user) { create(:delivery_partner_user, organisation: organisation) }
       let(:activity) { create(:project_activity, :with_report, organisation: organisation) }
     end
+  end
+
+  def given_i_am_on_the_new_refund_form
+    visit organisation_activity_financials_path(
+      organisation_id: activity.organisation.id,
+      activity_id: activity.id
+    )
+    click_on t("page_content.refund.button.create")
+  end
+
+  def and_i_submit_the_new_refund_form_incorrectly
+    click_on(t("default.button.submit"))
+  end
+
+  def then_i_expect_to_see_how_i_need_to_correct_the_refund_form
+    expect(page).to have_content("Select a financial quarter")
+    expect(page).to have_content("Select a financial year")
+    expect(page).to have_content("Enter a comment describing the need for the refund")
+    expect(page).to have_content("Enter a refund amount")
   end
 end

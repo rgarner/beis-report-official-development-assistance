@@ -9,9 +9,9 @@
       %h2.govuk-heading-l
         = t("page_title.refund.edit")
 
-      = form_with model: @refund, url: activity_refund_path(@activity, @refund) do |f|
+      = form_with model: @refund, url: activity_refund_path(@activity, @refund.id) do |f|
         = render partial: "form", locals: { f: f, activity: @activity }
 
         = f.govuk_submit t("default.button.submit")
 
-        = link_to t("default.button.delete"), activity_refund_path(@activity, @refund), method: "delete" , class: "govuk-button govuk-button--warning", "data-module": "govuk-button", role: "button", data: { confirm: "Are you sure you want to delete this refund?" }
+        = link_to t("default.button.delete"), activity_refund_path(@activity, @refund.id), method: "delete" , class: "govuk-button govuk-button--warning", "data-module": "govuk-button", role: "button", data: { confirm: "Are you sure you want to delete this refund?" }

@@ -17,9 +17,9 @@ RSpec.describe CreateRefund do
       context "when the attributes are valid" do
         let(:attributes) do
           {
-            value: 100.10,
-            financial_quarter: 1,
-            financial_year: 2020,
+            value: "100.10",
+            financial_quarter: "1",
+            financial_year: "2020",
             comment: "Some words",
           }
         end
@@ -35,12 +35,14 @@ RSpec.describe CreateRefund do
         end
 
         it "sets the correct attributes" do
-          expect(refund.parent_activity).to eq(activity)
-          expect(refund.report).to eq(report)
-          expect(refund.value).to eq(100.10)
-          expect(refund.financial_quarter).to eq(1)
-          expect(refund.financial_year).to eq(2020)
-          expect(refund.comment).to eq("Some words")
+          aggregate_failures do
+            expect(refund.parent_activity).to eq(activity)
+            expect(refund.report).to eq(report)
+            expect(refund.value).to eq(BigDecimal("-100.1"))
+            expect(refund.financial_quarter).to eq(1)
+            expect(refund.financial_year).to eq(2020)
+            expect(refund.comment.comment).to eq("Some words")
+          end
         end
       end
 

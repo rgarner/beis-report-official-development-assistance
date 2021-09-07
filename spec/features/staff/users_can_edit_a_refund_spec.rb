@@ -18,21 +18,20 @@ RSpec.feature "Users can edit a refund" do
     end
 
     scenario "they can edit a refund for an activity" do
-      fill_in "refund[value]", with: "100"
-      choose "4", name: "refund[financial_quarter]"
-      select "2019-2020", from: "refund[financial_year]"
-      fill_in "refund[comment]", with: "Comment goes here"
+      fill_in "refund_form[value]", with: "100"
+      choose "4", name: "refund_form[financial_quarter]"
+      select "2019-2020", from: "refund_form[financial_year]"
+      fill_in "refund_form[comment]", with: "Edited comment"
 
       expect {
         click_on(t("default.button.submit"))
       }.to change {
-        refund.reload.attributes.slice("financial_year", "financial_quarter", "value", "comment")
+        refund.reload.attributes.slice("financial_year", "financial_quarter", "value")
       }.to({
         "financial_year" => 2019,
         "financial_quarter" => 4,
-        "value" => BigDecimal("100"),
-        "comment" => "Comment goes here",
-      })
+        "value" => -BigDecimal("100"),
+      }).and change { refund.reload.comment.reload.comment }.to("Edited comment")
 
       expect(page).to have_content(t("action.refund.update.success"))
     end
