@@ -64,7 +64,7 @@ RUN yarn install
 # ------------------------------------------------------------------------------
 # web
 # ------------------------------------------------------------------------------
-FROM dependencies AS web
+FROM dependencies AS app
 
 # Set up install environment
 RUN mkdir -p ${APP_HOME}
@@ -76,6 +76,13 @@ COPY . ${APP_HOME}
 # This must be ordered before rake assets:precompile
 RUN cp -R $DEPS_HOME/node_modules $APP_HOME/node_modules
 RUN cp -R $DEPS_HOME/node_modules/govuk-frontend/govuk/assets $APP_HOME/app/assets
+
+# db setup
+COPY ./docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+FROM app AS web
 
 RUN \
   RAILS_ENV=$RAILS_ENV \
@@ -97,11 +104,6 @@ ARG time_of_build
 ENV CURRENT_SHA=$current_sha
 ENV TIME_OF_BUILD=$time_of_build
 
-# db setup
-COPY ./docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
 EXPOSE 3000
 
 CMD ["bundle", "exec", "puma"]
@@ -109,7 +111,7 @@ CMD ["bundle", "exec", "puma"]
 # ------------------------------------------------------------------------------
 # test
 # ------------------------------------------------------------------------------
-FROM web as test
+FROM app as test
 
 RUN apt-get install -qq -y firefox-esr \
   shellcheck
