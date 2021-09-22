@@ -129,7 +129,16 @@ RSpec.describe SpendingBreakdown::Export do
           expect(value_for_header("Refund FQ3 2020-2021").to_s).to eql("0")
           expect(value_for_header("Actual net FQ3 2020-2021").to_s).to eql("0")
         end
+      end
 
+      context "where there are additional activities" do
+        before do
+          4.times { create(:project_activity, organisation: organisation) }
+        end
+
+        it "includes a row for each" do
+          expect(subject.rows.count).to eq(5)
+        end
       end
     end
   end
