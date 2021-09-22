@@ -83,21 +83,30 @@ RSpec.describe SpendingBreakdown::Export do
     describe "financial data" do
       it "contains the financial data for financial quarter 1 2020-2021" do
         aggregate_failures do
-          expect(subject.rows.first[5].to_s).to eql("200.0")
-          expect(subject.rows.first[6].to_s).to eql("-350.0")
-          expect(subject.rows.first[7].to_s).to eql("-150.0")
+          expect(value_for_header("Actual spend FQ1 2020-2021").to_s).to eql("200.0")
+          expect(value_for_header("Refund FQ1 2020-2021").to_s).to eql("-350.0")
+          expect(value_for_header("Actual net FQ1 2020-2021").to_s).to eql("-150.0")
         end
       end
 
       it "contains the financial data for financial quarter 4 2020-2021" do
         aggregate_failures do
-          expect(subject.rows.first[11].to_s).to eql("200.0")
-          expect(subject.rows.first[12].to_s).to eql("-350.0")
-          expect(subject.rows.first[13].to_s).to eql("-150.0")
+          expect(value_for_header("Actual spend FQ4 2020-2021").to_s).to eql("200.0")
+          expect(value_for_header("Refund FQ4 2020-2021").to_s).to eql("-350.0")
+          expect(value_for_header("Actual net FQ4 2020-2021").to_s).to eql("-150.0")
         end
       end
 
-      it "containts zeros value for the financial quarters inbetween" do
+      it "contains zero values for the financial quarters inbetween" do
+        aggregate_failures do
+          expect(value_for_header("Actual spend FQ2 2020-2021").to_s).to eql("0")
+          expect(value_for_header("Refund FQ2 2020-2021").to_s).to eql("0")
+          expect(value_for_header("Actual net FQ2 2020-2021").to_s).to eql("0")
+
+          expect(value_for_header("Actual spend FQ3 2020-2021").to_s).to eql("0")
+          expect(value_for_header("Refund FQ3 2020-2021").to_s).to eql("0")
+          expect(value_for_header("Actual net FQ3 2020-2021").to_s).to eql("0")
+        end
 
       end
     end
