@@ -1,5 +1,5 @@
 RSpec.describe SpendingBreakdown::Export do
-  let!(:organisation) { create(:delivery_partner_organisation) }
+  let!(:organisation) { create(:delivery_partner_organisation, beis_organisation_reference: "BC") }
   let!(:activity) { create(:project_activity, organisation: organisation) }
   let!(:source_fund) { Fund.new(activity.source_fund_code) }
   let!(:actual) { create(:actual, parent_activity: activity, value: 100, financial_quarter: 1, financial_year: 2020) }
@@ -24,6 +24,28 @@ RSpec.describe SpendingBreakdown::Export do
 
   def value_for_header(header_name)
     subject.rows.first[subject.headers.index(header_name)]
+  end
+
+  describe "#filename" do
+    context "when an organisation IS used in construction" do
+      it "includes the organisation reference" do
+        newton_fund = Fund.new(1)
+        breakdown = SpendingBreakdown::Export.new(
+          source_fund: newton_fund,
+          organisation: organisation
+        )
+        expect(breakdown.filename).to eq("NF_BC_spending_breakdown.csv")
+      end
+    end
+
+    context "when NO organisation is used in construction" do
+      it "leaves out the organisation reference" do
+        newton_fund = Fund.new(1)
+        breakdown = SpendingBreakdown::Export.new(source_fund: newton_fund)
+
+        expect(breakdown.filename).to eq("NF_spending_breakdown.csv")
+      end
+    end
   end
 
   describe "#headers" do
