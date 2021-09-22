@@ -28,42 +28,42 @@ RSpec.describe SpendingBreakdown::Export do
 
   describe "#headers" do
     it "includes the five headings that describe the activity" do
-      expect(subject.headers[0..4]).to eql([
+      expect(subject.headers).to include(
         "RODA identifier",
         "Delivery partner identifier",
         "Delivery partner organisation",
         "Title",
         "Level",
-      ])
+      )
     end
 
-    it "includes the three heading that descibe the finances for financial quarter 1 2020-2021" do
-      expect(subject.headers[5..7]).to eql([
+    it "includes the three headings that describe the finances for financial quarter 1 2020-2021" do
+      expect(subject.headers).to include(
         "Actual spend FQ1 2020-2021",
         "Refund FQ1 2020-2021",
         "Actual net FQ1 2020-2021",
-      ])
+      )
     end
 
-    it "includes the three heading that descibe the finances for financial quarter 4 2020-2021" do
-      expect(subject.headers[14..16]).to eql([
+    it "includes the three headings that describe the finances for financial quarter 4 2020-2021" do
+      expect(subject.headers).to include(
         "Actual spend FQ4 2020-2021",
         "Refund FQ4 2020-2021",
         "Actual net FQ4 2020-2021",
-      ])
+      )
     end
 
-    it "includes the three heading that descibe the finances for financial quarters inbetween" do
-      expect(subject.headers[8..10]).to eql([
+    it "includes the three headings that describe the finances for financial quarters inbetween" do
+      expect(subject.headers).to include(
         "Actual spend FQ2 2020-2021",
         "Refund FQ2 2020-2021",
         "Actual net FQ2 2020-2021",
-      ])
-      expect(subject.headers[11..13]).to eql([
+      )
+      expect(subject.headers).to include(
         "Actual spend FQ3 2020-2021",
         "Refund FQ3 2020-2021",
         "Actual net FQ3 2020-2021",
-      ])
+      )
     end
   end
 
