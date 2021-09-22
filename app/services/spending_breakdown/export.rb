@@ -35,16 +35,7 @@ class SpendingBreakdown::Export
     ].reject(&:blank?).join("_")
   end
 
- def test_adj(activity)
-    all_totals_for_activity = Adjustment.joins("LEFT OUTER JOIN adjustment_details ON adjustment_details.adjustment_id = transactions.id")
-      .where(parent_activity_id: activity.id)
-      .select(:financial_quarter, :financial_year, :parent_activity_id, :value, :type, "adjustment_details.adjustment_type")
-      .group(:parent_activity_id, :financial_quarter, :financial_year, :type, "adjustment_details.adjustment_type")
-      .order(:parent_activity_id, :financial_quarter, :financial_year)
-      .sum(:value)
-
-    binding.pry
- end
+  private
 
   def financial_data(activity)
     all_totals_for_activity = Transaction.joins("LEFT OUTER JOIN adjustment_details ON adjustment_details.adjustment_id = transactions.id")
@@ -70,8 +61,6 @@ class SpendingBreakdown::Export
     }
     rows.flatten!
   end
-  private
-
 
   def activity_data(activity)
     [
