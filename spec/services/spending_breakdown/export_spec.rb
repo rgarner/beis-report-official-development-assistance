@@ -91,7 +91,7 @@ RSpec.describe SpendingBreakdown::Export do
 
   describe "#rows" do
     describe "non financial data" do
-      it "conatins the appropriate values" do
+      it "contains the appropriate values" do
         aggregate_failures do
           expect(value_for_header("RODA identifier")).to eql(activity.roda_identifier)
           expect(value_for_header("Delivery partner identifier")).to eql(activity.delivery_partner_identifier)
