@@ -15,6 +15,8 @@ module GOVUKDesignSystemFormBuilder
   end
   class Base
     def has_errors?
+      return false if @builder.object.nil?
+
       @builder.object.errors.any? &&
         @builder.object.errors.messages.dig(
           translated_attribute_name(attribute_name: @attribute_name)

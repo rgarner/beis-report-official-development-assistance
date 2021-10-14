@@ -45,6 +45,7 @@ class ReportPolicy < ApplicationPolicy
   end
 
   def upload?
+    return true if beis_user?
     record.editable? && record.organisation == user.organisation
   end
 

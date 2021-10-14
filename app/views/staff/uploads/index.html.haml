@@ -1,0 +1,37 @@
+= content_for :page_title_prefix, "Uploads"
+
+%main.govuk-main-wrapper#main-content{ role: "main" }
+  .govuk-grid-row
+    .govuk-grid-column-full
+      %h1.govuk-heading-xl
+        Uploads
+
+      #upload-actuals-section.govuk-accordion__section{data: { module: "govuk-accordion"}}
+        .govuk-accordion__section
+          .govuk-accordion__section-header
+            %h2.govuk-accordion__section-heading
+              %span#upload-actuals.govuk-accordion__section-button
+                Upload actuals
+          .govuk-accordion__section-content{ class: "govuk-!-padding-2" }
+            = form_with url: actuals_uploads_path, method: :put do |f|
+              = f.govuk_collection_select :organisation_id,
+                @organisations,
+                :id,
+                :name,
+                { include_blank: true }
+
+              = f.govuk_collection_select :fund_id,
+                Fund.all,
+                :activity_id,
+                :name,
+                { include_blank: true }
+
+              = f.govuk_file_field "report[actual_csv]",
+                label: { text: t("form.label.actual.csv_file") },
+                hint: { text: t("form.hint.actual.csv_file") }
+
+              = f.govuk_submit t("action.actual.upload.button")
+
+
+
+

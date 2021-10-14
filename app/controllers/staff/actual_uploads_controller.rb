@@ -62,7 +62,16 @@ class Staff::ActualUploadsController < Staff::BaseController
   end
 
   private def report
-    @_report ||= Report.find(params[:report_id])
+    @_report ||= begin
+      if params[:report_id]
+        Report.find(params[:report_id])
+      else
+        Report.active.find_by(
+          organisation_id: params[:organisation_id],
+          fund_id: params[:fund_id]
+        )
+      end
+    end
   end
 
   private def csv_headers

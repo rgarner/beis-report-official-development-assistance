@@ -88,7 +88,7 @@ class ImportActuals
       attrs = @converter.to_h
       assign_default_values(attrs)
 
-      creator = CreateActual.new(activity: @activity, report: @report)
+      creator = CreateActual.new(activity: @activity, report: @report, user: @user)
       result = creator.call(attributes: attrs)
       return unless result
 

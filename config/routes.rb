@@ -18,6 +18,9 @@ Rails.application.routes.draw do
     get "home", to: "home#show"
     resources :users
     resources :activities, only: [:index]
+    resources :uploads, only: [:index] do
+      put :actuals, to: "actual_uploads#update", on: :collection
+    end
 
     constraints role: /delivery_partners|matched_effort_providers|external_income_providers/ do
       get "organisations/(:role)", to: "organisations#index", defaults: {role: "delivery_partners"}, as: :organisations

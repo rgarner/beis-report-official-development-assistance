@@ -1,10 +1,11 @@
 class CreateActual
-  attr_accessor :activity, :report, :actual
+  attr_accessor :activity, :report, :actual, :user
 
-  def initialize(activity:, report: nil)
+  def initialize(activity:, report: nil, user: nil)
     self.activity = activity
     self.report = report || Report.editable_for_activity(activity)
     self.actual = Actual.new
+    self.user = user
   end
 
   def call(attributes: {})
@@ -23,8 +24,9 @@ class CreateActual
       actual.report = report
     end
 
-    result = if actual.valid?
-      Result.new(actual.save, actual)
+    context = user&.organisation&.service_owner? ? :backfill : nil
+    result = if actual.valid?(context)
+      Result.new(actual.save(context: context), actual)
     else
       Result.new(false, actual)
     end

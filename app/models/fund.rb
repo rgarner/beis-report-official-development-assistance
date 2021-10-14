@@ -23,7 +23,11 @@ class Fund
   end
 
   def activity
-    Activity.fund.find_by!(source_fund_code: id)
+    @activity ||= Activity.fund.find_by!(source_fund_code: id)
+  end
+
+  def activity_id
+    activity.id
   end
 
   def ==(other)
