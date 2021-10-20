@@ -7,13 +7,25 @@ RSpec.describe Export::AllActivityTotals do
     @q1_report = create(:report, financial_quarter: 1, financial_year: 2020)
     @q4_report = create(:report, financial_quarter: 4, financial_year: 2020)
 
-    create_q1_2020_actual_and_adjustments_in_q1_report
-    create_q4_2020_actual_and_adjustments_in_q4_report
-
-    create_q1_2020_refund_and_adjustments_in_q1_report
-    create_q4_2020_refund_and_adjustments_in_q4_report
-
-    create_q1_actual_and_refund_adjustments_in_q4_report
+    create_fixtures(
+      <<~TABLE
+        |transaction|financial_period|report|value|
+        | Actual    | q1             |q1    |  100|
+        | Adj. Act. | q1             |q1    |  200|
+        | Adj. Act. | q1             |q1    | -100|
+        | Actual    | q4             |q4    |  100|
+        | Adj. Act. | q4             |q4    |  200|
+        | Adj. Act. | q4             |q4    | -100|
+        | Refund    | q1             |q1    | -200|
+        | Adj. Ref. | q1             |q1    |   50|
+        | Adj. Ref. | q1             |q1    | -200|
+        | Refund    | q4             |q4    | -200|
+        | Adj. Ref. | q4             |q4    |  100|
+        | Adj. Ref. | q4             |q4    | -200|
+        | Adj. Act. | q1             |q4    |  500|
+        | Adj. Ref. | q1             |q4    |  400|
+      TABLE
+    )
   end
 
   after(:all) do
@@ -75,140 +87,30 @@ RSpec.describe Export::AllActivityTotals do
     end
   end
 
-  def create_q1_2020_actual_and_adjustments_in_q1_report
-    @actual = create(
-      :actual,
-      parent_activity: @activity,
-      value: 100,
-      financial_quarter: 1,
-      financial_year: 2020,
-      report: @q1_report,
-    )
-    create(
-      :adjustment,
-      :actual,
-      parent_activity: @activity,
-      value: 200,
-      financial_quarter: 1,
-      financial_year: 2020,
-      report: @q1_report,
-    )
-    create(
-      :adjustment,
-      :actual,
-      parent_activity: @activity,
-      value: -100,
-      financial_quarter: 1,
-      financial_year: 2020,
-      report: @q1_report,
-    )
+  def create_fixtures(table)
+    CSV.parse(table, col_sep: "|", headers: true).each do |row|
+      case row["transaction"].strip
+      when "Actual"
+        create(:actual, fixture_attrs(row))
+      when "Adj. Act."
+        create(:adjustment, :actual, fixture_attrs(row))
+      when "Adj. Ref."
+        create(:adjustment, :refund, fixture_attrs(row))
+      when "Refund"
+        create(:refund, fixture_attrs(row))
+      else
+        raise "don't know what to do"
+      end
+    end
   end
 
-  def create_q4_2020_actual_and_adjustments_in_q4_report
-    create(
-      :actual,
+  def fixture_attrs(row)
+    {
       parent_activity: @activity,
-      value: 100,
-      financial_quarter: 4,
+      value: row["value"].strip,
+      financial_quarter: row["financial_period"][/\d/],
       financial_year: 2020,
-      report: @q4_report,
-    )
-    create(
-      :adjustment,
-      :actual,
-      parent_activity: @activity,
-      value: 200,
-      financial_quarter: 4,
-      financial_year: 2020,
-      report: @q4_report,
-    )
-    create(
-      :adjustment,
-      :actual,
-      parent_activity: @activity,
-      value: -100,
-      financial_quarter: 4,
-      financial_year: 2020,
-      report: @q4_report,
-    )
-  end
-
-  def create_q1_2020_refund_and_adjustments_in_q1_report
-    @refund = create(
-      :refund,
-      parent_activity: @activity,
-      value: -200,
-      financial_quarter: 1,
-      financial_year: 2020,
-      report: @q1_report,
-    )
-    create(
-      :adjustment,
-      :refund,
-      parent_activity: @activity,
-      value: 50,
-      financial_quarter: 1,
-      financial_year: 2020,
-      report: @q1_report,
-    )
-    create(
-      :adjustment,
-      :refund,
-      parent_activity: @activity,
-      value: -200,
-      financial_quarter: 1,
-      financial_year: 2020,
-      report: @q1_report,
-    )
-  end
-
-  def create_q4_2020_refund_and_adjustments_in_q4_report
-    create(
-      :refund,
-      parent_activity: @activity,
-      value: -200,
-      financial_quarter: 4,
-      financial_year: 2020,
-      report: @q4_report,
-    )
-    create(
-      :adjustment,
-      :refund,
-      parent_activity: @activity,
-      value: 100,
-      financial_quarter: 4,
-      financial_year: 2020,
-      report: @q4_report,
-    )
-    create(
-      :adjustment,
-      :refund,
-      parent_activity: @activity,
-      value: -200,
-      financial_quarter: 4,
-      financial_year: 2020,
-      report: @q4_report,
-    )
-  end
-
-  def create_q1_actual_and_refund_adjustments_in_q4_report
-    create(
-      :adjustment,
-      :actual,
-      parent_activity: @activity,
-      value: 500,
-      financial_quarter: 1,
-      financial_year: 2020,
-      report: @q4_report,
-    )
-    create(
-      :adjustment,
-      :refund,
-      parent_activity: @activity,
-      value: 400,
-      financial_quarter: 1,
-      financial_year: 2020,
-      report: @q4_report,
-    )
+      report: instance_variable_get("@#{row["report"].strip}_report"),
+    }
   end
 end
