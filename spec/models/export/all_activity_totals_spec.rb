@@ -38,8 +38,8 @@ RSpec.describe Export::AllActivityTotals do
     it "returns all totals for Q1 including those added in a later report" do
       all_q1_totals = {
         [@activity.id, 1, 2020, "Actual", nil] => BigDecimal(100),
-        [@activity.id, 1, 2020, "Adjustment", "Actual"] => BigDecimal(600),
-        [@activity.id, 1, 2020, "Adjustment", "Refund"] => BigDecimal(250),
+        [@activity.id, 1, 2020, "Adjustment", "Actual"] => BigDecimal(200 - 100 + 500),
+        [@activity.id, 1, 2020, "Adjustment", "Refund"] => BigDecimal(50 - 200 + 400),
         [@activity.id, 1, 2020, "Refund", nil] => BigDecimal(-200),
       }
 
