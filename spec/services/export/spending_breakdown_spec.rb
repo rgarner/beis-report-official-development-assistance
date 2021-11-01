@@ -7,7 +7,7 @@ RSpec.describe Export::SpendingBreakdown do
     @activity = create(:project_activity, organisation: @organisation)
     @source_fund = Fund.new(1)
 
-    q1_2019_report = create(
+    @q1_2019_report = create(
       :report,
       :approved,
       organisation: @organisation,
@@ -16,20 +16,7 @@ RSpec.describe Export::SpendingBreakdown do
       financial_year: 2019
     )
 
-    ForecastHistory
-      .new(@activity, report: q1_2019_report, financial_quarter: 1, financial_year: 2020)
-      .set_value(10_000)
-    ForecastHistory
-      .new(@activity, report: q1_2019_report, financial_quarter: 4, financial_year: 2020)
-      .set_value(5_00)
-    ForecastHistory
-      .new(@activity, report: q1_2019_report, financial_quarter: 1, financial_year: 2021)
-      .set_value(10_000)
-    ForecastHistory
-      .new(@activity, report: q1_2019_report, financial_quarter: 4, financial_year: 2021)
-      .set_value(20_000)
-
-    q4_2019_report = create(
+    @q4_2019_report = create(
       :report,
       :approved,
       organisation: @organisation,
@@ -38,23 +25,24 @@ RSpec.describe Export::SpendingBreakdown do
       financial_year: 2019
     )
 
-    ForecastHistory
-      .new(@activity, report: q4_2019_report, financial_quarter: 1, financial_year: 2020)
-      .set_value(5_000)
-    ForecastHistory
-      .new(@activity, report: q4_2019_report, financial_quarter: 4, financial_year: 2020)
-      .set_value(2_500)
-    ForecastHistory
-      .new(@activity, report: q4_2019_report, financial_quarter: 1, financial_year: 2021)
-      .set_value(20_000)
-    ForecastHistory
-      .new(@activity, report: q4_2019_report, financial_quarter: 4, financial_year: 2021)
-      .set_value(10_000)
-
     @q1_report = create(:report, financial_quarter: 1, financial_year: 2020)
     @q2_report = create(:report, financial_quarter: 2, financial_year: 2020)
 
-    create_fixtures(
+    create_forecast_fixtures(
+      <<~TABLE
+        |report|financial_quarter|financial_year|value|
+        |q1_19 |   1             |   2020       |10000|
+        |q1_19 |   4             |   2020       | 5000|
+        |q1_19 |   1             |   2021       |10000|
+        |q1_19 |   4             |   2021       |20000|
+        |q4_19 |   1             |   2020       | 5000|
+        |q4_19 |   4             |   2020       | 2500|
+        |q4_19 |   1             |   2021       |20000|
+        |q4_19 |   4             |   2021       |10000|
+      TABLE
+    )
+
+    create_transaction_fixtures(
       <<~TABLE
         |transaction|report|financial_period|value|
         | Actual    |q1    | q1             |  100|
@@ -213,24 +201,41 @@ RSpec.describe Export::SpendingBreakdown do
     end
   end
 
-  def create_fixtures(table)
+  def create_forecast_fixtures(table)
+    CSV.parse(table, col_sep: "|", headers: true).each do |row|
+      ForecastHistory
+        .new(@activity, forecast_attrs(row))
+        .set_value(row["value"])
+    end
+  end
+
+  def forecast_attrs(row)
+    report = row["report"].match(/q\d/)[0]
+    {
+      report: instance_variable_get("@#{report}_2019_report"),
+      financial_quarter: row["financial_quarter"].strip,
+      financial_year: row["financial_year"].strip,
+    }
+  end
+
+  def create_transaction_fixtures(table)
     CSV.parse(table, col_sep: "|", headers: true).each do |row|
       case row["transaction"].strip
       when "Actual"
-        create(:actual, fixture_attrs(row))
+        create(:actual, transaction_fixture_attrs(row))
       when "Adj. Act."
-        create(:adjustment, :actual, fixture_attrs(row))
+        create(:adjustment, :actual, transaction_fixture_attrs(row))
       when "Adj. Ref."
-        create(:adjustment, :refund, fixture_attrs(row))
+        create(:adjustment, :refund, transaction_fixture_attrs(row))
       when "Refund"
-        create(:refund, fixture_attrs(row))
+        create(:refund, transaction_fixture_attrs(row))
       else
         raise "don't know what to do"
       end
     end
   end
 
-  def fixture_attrs(row)
+  def transaction_fixture_attrs(row)
     {
       parent_activity: @activity,
       value: row["value"].strip,
