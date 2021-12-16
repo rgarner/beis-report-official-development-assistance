@@ -10,16 +10,21 @@ RSpec.describe SpendingBreakdownJob, type: :job do
       allow(Export::SpendingBreakdown).to receive(:new)
       allow(User).to receive(:find)
       allow(Fund).to receive(:new)
-      
     end
 
     context "when the organisation_id is nil" do
-      it "it asks the user object for the user with a given id" do
+      it "asks the user object for the user with a given id" do
         SpendingBreakdownJob.perform_now(requester_id: "abcd123", fund_id: "fundabcs123")
         expect(User).to have_received(:find).with("abcd123")
       end
-      xit "does some things" do
-        SpendingBreakdownJob.perform_now(requester_id: requester.id, fund_id: fund.id)
+
+      it "asks the fund object for the fund with a given id" do
+        SpendingBreakdownJob.perform_now(requester_id: "abcd123", fund_id: "fundabcs123")
+        expect(User).to have_received(:find).with("abcd123")
+      end
+
+      it "calls Export::SpendingBreakdown" do
+        SpendingBreakdownJob.perform_now(requester_id: "abcd123", fund_id: "fundabcs123")
         expect(Export::SpendingBreakdown).to have_received(:new)
       end
     end
