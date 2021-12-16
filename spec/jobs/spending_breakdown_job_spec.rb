@@ -3,50 +3,35 @@ require "rails_helper"
 RSpec.describe SpendingBreakdownJob, type: :job do
   let(:requester) { double(:user) }
   let(:fund) { double(:fund) }
-  let(:organisation) { double(:organisation) }
+
+  let(:download_link) { "https://beis.example.com/export_1234.csv" }
+  let(:breakdown) { instance_double(Export::SpendingBreakdown, filename: double("filename")) }
+  let(:s3_uploader) { instance_double(Export::S3Uploader, upload: download_link) }
 
   describe "#perform" do
     before do
-      allow(Export::SpendingBreakdown).to receive(:new)
+      allow(Export::SpendingBreakdown).to receive(:new).and_return(breakdown)
       allow(User).to receive(:find)
       allow(Fund).to receive(:new)
+      allow(Export::S3Uploader).to receive(:new).and_return(s3_uploader)
     end
 
-    context "when the organisation_id is nil" do
-      it "asks the user object for the user with a given id" do
-        SpendingBreakdownJob.perform_now(requester_id: "abcd123", fund_id: "fundabcs123")
-        expect(User).to have_received(:find).with("abcd123")
-      end
+    it "asks the user object for the user with a given id" do
+      SpendingBreakdownJob.perform_now(requester_id: "user123", fund_id: double)
 
-      it "asks the fund object for the fund with a given id" do
-        SpendingBreakdownJob.perform_now(requester_id: "abcd123", fund_id: "fundabcs123")
-        expect(User).to have_received(:find).with("abcd123")
-      end
-
-      it "calls Export::SpendingBreakdown" do
-        SpendingBreakdownJob.perform_now(requester_id: "abcd123", fund_id: "fundabcs123")
-        expect(Export::SpendingBreakdown).to have_received(:new)
-      end
+      expect(User).to have_received(:find).with("user123")
     end
 
-    context "when the organisation_id is nil" do
+    it "asks the fund object for the fund with a given id" do
+      SpendingBreakdownJob.perform_now(requester_id: double, fund_id: "fund123")
 
+      expect(Fund).to have_received(:new).with("fund123")
     end
 
-    context "when the fund_id is not found" do
+    it "using Export::SpendingBreakdown to build the breakdown" do
+      SpendingBreakdownJob.perform_now(requester_id: double, fund_id: double)
 
+      expect(Export::SpendingBreakdown).to have_received(:new)
     end
-
-    context "when the requester_id is not found" do
-
-    end
-  end
-
-  describe "#save_csv_file_to_s3" do
-
-  end
-
-  describe "#email_link_to_requester" do
-
   end
 end
