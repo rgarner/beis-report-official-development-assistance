@@ -1,14 +1,26 @@
 require "rails_helper"
 
 RSpec.describe SpendingBreakdownJob, type: :job do
-  let(:requester) { create(:beis_user) }
-  let(:fund) { create(:fund_activity) }
-  let(:organisation) { fund.organisation }
+  let(:requester) { double(:user) }
+  let(:fund) { double(:fund) }
+  let(:organisation) { double(:organisation) }
 
   describe "#perform" do
-    context "when the organisation_id is not nil" do
-      it "does some things" do
-        expect(described_class.perform_later(requester_id: requester.id, fund_id: fund.id, organisation_id: organisation.id)).to eq([])
+    before do
+      allow(Export::SpendingBreakdown).to receive(:new)
+      allow(User).to receive(:find)
+      allow(Fund).to receive(:new)
+      
+    end
+
+    context "when the organisation_id is nil" do
+      it "it asks the user object for the user with a given id" do
+        SpendingBreakdownJob.perform_now(requester_id: "abcd123", fund_id: "fundabcs123")
+        expect(User).to have_received(:find).with("abcd123")
+      end
+      xit "does some things" do
+        SpendingBreakdownJob.perform_now(requester_id: requester.id, fund_id: fund.id)
+        expect(Export::SpendingBreakdown).to have_received(:new)
       end
     end
 
