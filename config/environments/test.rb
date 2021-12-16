@@ -70,7 +70,7 @@ Rails.application.configure do
   # See https://github.com/DFE-Digital/dfe-teachers-payment-service/commit/74ec587cfbe9aa6d0df01a72e99d70ffe9024748
   config.assets.css_compressor = nil
 
-  config.active_job.queue_adapter = :test
+  config.active_job.queue_adapter = :inline
 
   config.after_initialize do
     Bullet.enable = true
