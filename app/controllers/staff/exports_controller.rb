@@ -44,16 +44,8 @@ class Staff::ExportsController < Staff::BaseController
 
   def spending_breakdown
     authorize :export, :show_external_income?
-    fund = Fund.new(params[:fund_id])
+    SpendingBreakdownJob.perform(requester_id: current_user, fund_id: params[:fund_id], organisation_id: nil)
 
-    respond_to do |format|
-      format.csv do
-        export = Export::SpendingBreakdown.new(source_fund: fund)
-
-        stream_csv_download(filename: export.filename, headers: export.headers) do |csv|
-          export.rows.each { |row| csv << row }
-        end
-      end
-    end
+    render "new template"#with current_user email address
   end
 end
