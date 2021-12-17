@@ -4,5 +4,17 @@ class SpendingBreakdownJob < ApplicationJob
     fund = Fund.new(fund_id)
 
     export = Export::SpendingBreakdown.new(source_fund: fund)
+    tempfile = save_tempfile(export)
+  end
+
+  def save_tempfile(export)
+    tmpfile = Tempfile.new
+    CSV.new(tmpfile, {headers: true}) do |csv|
+      csv << export.headers
+      export.rows.each do |row|
+        csv << row
+      end
+    end
+    tmpfile
   end
 end
